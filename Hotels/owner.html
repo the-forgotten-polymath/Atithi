@@ -4,1438 +4,1043 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ATITHI &bull; Owner Executive Intelligence & Guest Operations</title>
-  <meta name="description" content="Executive hotel ownership and GM intelligence dashboard connecting in-room AI voice and chat operations to revenue attribution.">
+  <meta name="description" content="Minimalist, modern executive hotel intelligence dashboard inspired by clean neo-bento SaaS aesthetics.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     :root {
-      --bg-primary: #07090e;
-      --bg-secondary: #0d121d;
-      --bg-card: rgba(16, 22, 34, 0.75);
-      --bg-card-hover: rgba(22, 30, 48, 0.9);
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-gold: rgba(234, 179, 8, 0.25);
-      --gold-primary: #eab308;
-      --gold-gradient: linear-gradient(135deg, #facc15 0%, #ca8a04 100%);
-      --emerald-glow: #10b981;
-      --blue-glow: #3b82f6;
-      --amber-glow: #f59e0b;
-      --rose-glow: #ef4444;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --text-dim: #64748b;
-      --font-display: 'Cinzel', serif;
-      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --bg-outer: #b9cbd8;
+      --bg-tablet: #18181b;
+      --bg-canvas: #ffffff;
+      --card-yellow: #fef08a;
+      --card-purple: #e9d5ff;
+      --card-cyan: #bae6fd;
+      --card-dark: #18181b;
+      --btn-coral: #f97316;
+      --btn-coral-hover: #ea580c;
+      --text-dark: #18181b;
+      --text-muted: #64748b;
+      --text-subtle: #94a3b8;
+      --border-dark: #18181b;
+      --border-light: #e2e8f0;
+      --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-font-smoothing: antialiased;
     }
 
     body {
-      background-color: var(--bg-primary);
-      background-image: 
-        radial-gradient(at 15% 15%, rgba(234, 179, 8, 0.05) 0px, transparent 50%),
-        radial-gradient(at 85% 85%, rgba(59, 130, 246, 0.04) 0px, transparent 50%),
-        radial-gradient(at 50% 50%, rgba(16, 185, 129, 0.03) 0px, transparent 60%);
-      color: var(--text-main);
-      font-family: var(--font-body);
+      background-color: var(--bg-outer);
+      font-family: var(--font-main);
+      color: var(--text-dark);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-      line-height: 1.5;
-    }
-
-    /* Top Navigation */
-    .top-navbar {
-      height: 72px;
-      border-bottom: 1px solid var(--border-subtle);
-      background: rgba(7, 9, 14, 0.85);
-      backdrop-filter: blur(16px);
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 32px;
-    }
-
-    .brand-group {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .brand-badge {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: var(--gold-gradient);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #1e1b4b;
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 20px;
-      box-shadow: 0 4px 16px rgba(234, 179, 8, 0.25);
+      padding: 24px;
     }
 
-    .brand-meta h1 {
-      font-family: var(--font-display);
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: #fff;
+    /* Outer Tablet Frame Container */
+    .tablet-shell {
+      width: 100%;
+      max-width: 1360px;
+      background: var(--bg-tablet);
+      border-radius: 40px;
+      padding: 16px;
+      box-shadow: 0 35px 80px -15px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.1);
       display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .brand-meta h1 span.pill {
-      font-family: var(--font-body);
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      padding: 2px 8px;
-      border-radius: 20px;
-      background: rgba(234, 179, 8, 0.15);
-      color: var(--gold-primary);
-      border: 1px solid rgba(234, 179, 8, 0.3);
-      letter-spacing: 0.8px;
-    }
-
-    .brand-meta p {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
+      min-height: 820px;
       gap: 16px;
     }
 
-    .status-pill {
+    /* Left Sidebar Rail */
+    .side-rail {
+      width: 64px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+    }
+
+    .rail-top-group, .rail-bottom-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .rail-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: transparent;
+      border: none;
+      color: #94a3b8;
       display: flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      color: #34d399;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 6px 14px;
-      border-radius: 20px;
-    }
-
-    .pulse-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 10px #10b981;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(0.95); opacity: 0.8; }
-      50% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(0.95); opacity: 0.8; }
-    }
-
-    .btn-nav {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-main);
-      padding: 8px 16px;
-      border-radius: 10px;
-      font-size: 13px;
-      font-weight: 600;
+      justify-content: center;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
       text-decoration: none;
       transition: all 0.2s;
     }
 
-    .btn-nav:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
+    .rail-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
     }
 
-    /* Main Dashboard Layout */
-    .dashboard-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 32px 24px 60px;
-      width: 100%;
+    .rail-btn.active {
+      background: #facc15;
+      color: #18181b;
+      box-shadow: 0 4px 12px rgba(250, 204, 21, 0.3);
+    }
+
+    /* Inner Crisp White Canvas */
+    .main-canvas {
+      flex: 1;
+      background: var(--bg-canvas);
+      border-radius: 30px;
+      padding: 28px 36px 36px 36px;
       display: flex;
       flex-direction: column;
-      gap: 32px;
+      gap: 24px;
+      overflow-y: auto;
+      max-height: calc(100vh - 80px);
     }
 
-    /* Hero Context Header */
-    .hero-banner {
+    /* Top Navigation Row */
+    .canvas-header {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: flex-end;
+      gap: 20px;
       padding-bottom: 8px;
-      border-bottom: 1px solid var(--border-subtle);
     }
 
-    .hero-title h2 {
-      font-family: var(--font-display);
-      font-size: 28px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 4px;
-    }
-
-    .hero-title p {
-      font-size: 14px;
-      color: var(--text-muted);
-    }
-
-    .hero-date {
+    .header-welcome {
       display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 13px;
-      color: var(--text-dim);
-    }
-
-    .refresh-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.04);
-      padding: 4px 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border-subtle);
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    /* Section Headers */
-    .section-title {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--gold-primary);
-      display: flex;
-      align-items: center;
+      align-items: baseline;
       gap: 8px;
-      margin-bottom: 16px;
+      font-size: 15px;
+      color: var(--text-muted);
     }
 
-    /* Grid for TODAY KPIs */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
+    .brand-accent {
+      font-weight: 800;
+      color: var(--btn-coral);
+      letter-spacing: -0.3px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
       gap: 16px;
     }
 
-    .kpi-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      padding: 20px;
-      backdrop-filter: blur(12px);
+    .search-pill-wrap {
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: all 0.25s ease;
-      position: relative;
-      overflow: hidden;
+      align-items: center;
+      background: #ffffff;
+      border: 1.5px solid var(--border-dark);
+      border-radius: 9999px;
+      padding: 4px 6px 4px 16px;
+      gap: 8px;
+      width: 260px;
     }
 
-    .kpi-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
+    .search-pill-input {
+      border: none;
       background: transparent;
-      transition: background 0.25s ease;
+      font-family: var(--font-main);
+      font-size: 13px;
+      color: var(--text-dark);
+      outline: none;
+      width: 100%;
     }
 
-    .kpi-card:hover {
-      background: var(--bg-card-hover);
-      transform: translateY(-2px);
-      border-color: rgba(255, 255, 255, 0.15);
-    }
-
-    .kpi-card.today-calls::before { background: var(--blue-glow); }
-    .kpi-card.today-enquiries::before { background: var(--gold-primary); }
-    .kpi-card.today-complaints::before { background: var(--amber-glow); }
-    .kpi-card.today-resolved::before { background: var(--emerald-glow); }
-    .kpi-card.today-open::before { background: var(--rose-glow); }
-
-    .kpi-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 12px;
-    }
-
-    .kpi-label {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .kpi-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+    .search-btn-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1.5px solid var(--btn-coral);
+      color: var(--btn-coral);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      cursor: pointer;
     }
 
-    .icon-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-    .icon-gold { background: rgba(234, 179, 8, 0.15); color: #facc15; }
-    .icon-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-    .icon-emerald { background: rgba(16, 185, 129, 0.15); color: #34d399; }
-    .icon-rose { background: rgba(239, 68, 68, 0.15); color: #f87171; }
-
-    .kpi-val {
-      font-size: 36px;
-      font-weight: 800;
-      color: #fff;
-      font-family: var(--font-body);
-      line-height: 1.1;
-      margin-bottom: 6px;
-    }
-
-    .kpi-sub {
-      font-size: 12px;
-      color: var(--text-dim);
-    }
-
-    /* Dual Column Layout: Response Speed + Top Issues */
-    .dual-col-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    .card-panel {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: 20px;
-      padding: 24px;
-      backdrop-filter: blur(12px);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    /* Response Metrics */
-    .response-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .response-metric-box {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 14px;
-      padding: 18px;
-    }
-
-    .response-metric-title {
-      font-size: 12px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-weight: 600;
-      margin-bottom: 8px;
+    .header-notif-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-dark);
+      background: #ffffff;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      color: var(--text-dark);
+      cursor: pointer;
+      position: relative;
     }
 
-    .response-metric-val {
-      font-size: 30px;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 4px;
+    .notif-badge-dot {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--btn-coral);
+      border: 1.5px solid #ffffff;
     }
 
-    .response-metric-tag {
-      font-size: 11px;
-      font-weight: 600;
-      color: #34d399;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* Top Issues List */
-    .issues-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .issue-item {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      padding: 12px 16px;
-      border-radius: 12px;
-    }
-
-    .issue-top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .issue-name-grp {
+    .user-profile-badge {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #fff;
+      text-decoration: none;
+      color: var(--text-dark);
     }
 
-    .issue-count-badge {
-      background: rgba(234, 179, 8, 0.15);
-      color: var(--gold-primary);
-      border: 1px solid rgba(234, 179, 8, 0.3);
-      padding: 2px 10px;
-      border-radius: 12px;
-      font-size: 12px;
+    .avatar-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #fed7aa;
+      border: 1.5px solid var(--border-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: #9a3412;
+      overflow: hidden;
+    }
+
+    .avatar-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .user-name-box {
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .user-name {
       font-weight: 700;
     }
 
+    .user-role {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Title & Filter Pills Strip */
+    .title-filter-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-dark);
+    }
+
+    .filter-pills-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill-btn {
+      padding: 8px 18px;
+      border-radius: 9999px;
+      font-size: 12.5px;
+      font-weight: 600;
+      border: 1.5px solid var(--border-dark);
+      background: #ffffff;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .pill-btn:hover {
+      background: #f8fafc;
+    }
+
+    .pill-btn.active {
+      background: var(--text-dark);
+      color: #ffffff;
+    }
+
+    /* --- BENTO CARDS TOP ROW (3 Cards: Yellow, Purple, Cyan) --- */
+    .bento-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .bento-card {
+      border-radius: 24px;
+      border: 1.5px solid var(--border-dark);
+      padding: 22px 22px 20px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 230px;
+      position: relative;
+      transition: transform 0.2s;
+    }
+
+    .bento-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .card-yellow {
+      background: var(--card-yellow);
+    }
+
+    .card-purple {
+      background: var(--card-purple);
+    }
+
+    .card-cyan {
+      background: var(--card-cyan);
+    }
+
+    .card-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .tag-capsule {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1.5px solid var(--border-dark);
+    }
+
+    .tag-dark {
+      background: var(--text-dark);
+      color: #ffffff;
+    }
+
+    .tag-yellow {
+      background: #fde047;
+      color: #18181b;
+    }
+
+    .tag-purple {
+      background: #c084fc;
+      color: #18181b;
+    }
+
+    .card-bookmark-icon {
+      color: var(--text-dark);
+      cursor: pointer;
+    }
+
+    .bento-card-title {
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.25;
+      color: var(--text-dark);
+      margin-bottom: 16px;
+      letter-spacing: -0.3px;
+    }
+
+    .card-progress-box {
+      margin-bottom: 18px;
+    }
+
+    .progress-meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+    }
+
     .progress-bar-bg {
-      height: 6px;
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 4px;
-      overflow: hidden;
       width: 100%;
+      height: 7px;
+      background: rgba(24, 24, 27, 0.15);
+      border-radius: 9999px;
+      overflow: hidden;
     }
 
     .progress-bar-fill {
       height: 100%;
-      border-radius: 4px;
-      background: var(--gold-gradient);
+      background: var(--text-dark);
+      border-radius: 9999px;
     }
 
-    /* OPPORTUNITIES & BUSINESS MODEL FUNNEL */
-    .revenue-panel {
-      background: linear-gradient(145deg, rgba(16, 22, 34, 0.9) 0%, rgba(13, 18, 29, 0.95) 100%);
-      border: 1px solid var(--border-gold);
-      border-radius: 20px;
-      padding: 28px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .revenue-panel::after {
-      content: '';
-      position: absolute;
-      top: -100px;
-      right: -100px;
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(234, 179, 8, 0.08) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .funnel-container {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 32px;
-      margin-top: 20px;
-    }
-
-    /* Funnel Steps */
-    .funnel-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      position: relative;
-    }
-
-    .funnel-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 14px;
-      padding: 16px 20px;
+    .card-footer-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: relative;
-      transition: all 0.2s ease;
+      gap: 12px;
     }
 
-    .funnel-card:hover {
-      border-color: rgba(234, 179, 8, 0.3);
-      background: rgba(234, 179, 8, 0.03);
-    }
-
-    .funnel-left {
+    /* Stacked Avatars Group */
+    .avatar-stack {
       display: flex;
       align-items: center;
+    }
+
+    .avatar-stack-item {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-dark);
+      background: #ffffff;
+      margin-left: -8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      overflow: hidden;
+    }
+
+    .avatar-stack-item:first-child {
+      margin-left: 0;
+    }
+
+    .avatar-stack-item.count {
+      background: #18181b;
+      color: #ffffff;
+      font-size: 9px;
+      padding: 0 4px;
+      width: auto;
+      min-width: 28px;
+      border-radius: 9999px;
+    }
+
+    .btn-action-coral {
+      padding: 8px 18px;
+      background: var(--btn-coral);
+      color: #ffffff;
+      border: 1.5px solid var(--border-dark);
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-action-coral:hover {
+      background: var(--btn-coral-hover);
+      transform: translateY(-1px);
+    }
+
+    /* --- BOTTOM BENTO ROW (2 Columns: White Wide Card + Dark Hero Card) --- */
+    .bento-bottom-grid {
+      display: grid;
+      grid-template-columns: 2fr 1.15fr;
+      gap: 20px;
+    }
+
+    .bottom-white-card {
+      background: #ffffff;
+      border-radius: 24px;
+      border: 1.5px solid var(--border-dark);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
       gap: 16px;
     }
 
-    .funnel-num {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: rgba(234, 179, 8, 0.15);
-      color: var(--gold-primary);
+    .card-section-head {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 700;
+      justify-content: space-between;
     }
 
-    .funnel-text h4 {
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
+    .card-section-title {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
     }
 
-    .funnel-text p {
+    .link-view-all {
       font-size: 12px;
+      font-weight: 700;
+      color: var(--btn-coral);
+      text-decoration: none;
+    }
+
+    .link-view-all:hover {
+      text-decoration: underline;
+    }
+
+    /* Activity Table / List */
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .activity-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: #fafafa;
+      border: 1px solid #f1f5f9;
+      font-size: 12.5px;
+      transition: background 0.15s;
+    }
+
+    .activity-row:hover {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+
+    .activity-main-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .activity-title {
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .activity-sub {
+      font-size: 11px;
       color: var(--text-muted);
     }
 
-    .funnel-stat {
-      font-size: 22px;
-      font-weight: 800;
-      color: #facc15;
-    }
-
-    .funnel-arrow-down {
+    .activity-staff {
       display: flex;
-      justify-content: center;
-      color: rgba(234, 179, 8, 0.5);
-      font-size: 14px;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 12px;
     }
 
-    /* Revenue Highlight Hero Box */
-    .revenue-spotlight {
-      background: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(202, 138, 4, 0.04) 100%);
-      border: 1px solid rgba(234, 179, 8, 0.35);
-      border-radius: 16px;
+    .staff-mini-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1px solid var(--border-dark);
+      background: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    .activity-duration {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      min-width: 65px;
+      text-align: right;
+    }
+
+    /* Bottom Right Dark Bento Card */
+    .bottom-dark-card {
+      background: var(--card-dark);
+      color: #ffffff;
+      border-radius: 24px;
+      border: 1.5px solid var(--border-dark);
       padding: 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 20px;
+      min-height: 280px;
+      position: relative;
     }
 
-    .rev-hero-top p {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--gold-primary);
-      margin-bottom: 4px;
+    .bottom-dark-card .tag-capsule {
+      background: #facc15;
+      color: #18181b;
     }
 
-    .rev-hero-top h3 {
-      font-size: 44px;
-      font-weight: 900;
-      color: #fff;
-      font-family: var(--font-body);
-      line-height: 1;
-    }
-
-    .rev-hero-top span.sub {
-      font-size: 13px;
-      color: #94a3b8;
-      display: block;
-      margin-top: 6px;
-    }
-
-    .business-callout {
-      background: rgba(0, 0, 0, 0.35);
-      border-left: 3px solid var(--gold-primary);
-      padding: 12px 16px;
-      border-radius: 0 10px 10px 0;
-      font-size: 12px;
-      color: #e2e8f0;
-      line-height: 1.5;
-    }
-
-    .business-callout strong {
-      color: var(--gold-primary);
-    }
-
-    /* Attributed Bookings Table */
-    .attributed-table-wrap {
-      margin-top: 24px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 14px;
-      overflow: hidden;
-    }
-
-    .attributed-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    .attributed-table th {
-      background: rgba(255, 255, 255, 0.04);
-      padding: 12px 16px;
-      text-align: left;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-muted);
-    }
-
-    .attributed-table td {
-      padding: 14px 16px;
-      border-top: 1px solid rgba(255, 255, 255, 0.04);
-      color: #f1f5f9;
-    }
-
-    .tag-pay-property {
-      background: rgba(234, 179, 8, 0.15);
-      color: #facc15;
-      border: 1px solid rgba(234, 179, 8, 0.3);
-      padding: 2px 8px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    /* Phase 9 Operational Intelligence & Shared-System Styles */
-    .intelligence-card {
-      background: linear-gradient(135deg, rgba(25, 18, 20, 0.9) 0%, rgba(18, 14, 24, 0.9) 100%);
-      border: 1px solid rgba(239, 68, 68, 0.35);
-      border-radius: var(--radius-lg);
-      padding: 24px 28px;
-      box-shadow: 0 8px 32px rgba(239, 68, 68, 0.12);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .intelligence-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    }
-
-    .intel-badge-grp {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .intel-pulse {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
+    .dark-card-title {
+      font-size: 20px;
       font-weight: 800;
-      color: #f87171;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      padding: 4px 10px;
-      border-radius: 6px;
+      line-height: 1.25;
+      color: #ffffff;
+      margin-top: 10px;
+      margin-bottom: 8px;
     }
 
-    .dot-red {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #ef4444;
-      box-shadow: 0 0 6px #ef4444;
-    }
-
-    .intel-subsys-pill {
-      font-size: 11px;
-      color: #fbbf24;
-      background: rgba(251, 191, 36, 0.1);
-      border: 1px solid rgba(251, 191, 36, 0.25);
-      padding: 3px 9px;
-      border-radius: 6px;
-      font-weight: 600;
-    }
-
-    .intel-status-pill {
-      font-size: 11px;
-      font-weight: 700;
-      color: #fca5a5;
-      background: rgba(239, 68, 68, 0.2);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      padding: 4px 12px;
-      border-radius: 20px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .pattern-flow-diagram {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      background: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 12px;
-      padding: 20px;
-    }
-
-    .flow-rooms-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-      width: 100%;
-    }
-
-    .room-incident-card {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 8px;
-      padding: 10px 18px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      min-width: 110px;
-    }
-
-    .room-inc-no {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 15px;
-      color: #fff;
-    }
-
-    .room-inc-issue {
-      font-size: 12px;
-      color: #fca5a5;
-      font-weight: 600;
-    }
-
-    .room-inc-channel {
-      font-size: 10px;
-      color: var(--text-dim);
-    }
-
-    .flow-rooms-arrow {
-      color: #f87171;
-      font-size: 18px;
-      font-weight: 700;
-    }
-
-    .flow-down-indicator {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      margin: 4px 0;
-    }
-
-    .down-line {
-      width: 2px;
-      height: 14px;
-      background: #ef4444;
-    }
-
-    .pattern-detected-chip {
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(185, 28, 28, 0.35) 100%);
-      border: 1px solid rgba(239, 68, 68, 0.5);
-      color: #fca5a5;
-      font-size: 12px;
-      font-weight: 800;
-      padding: 5px 14px;
-      border-radius: 20px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
-    }
-
-    .intel-alert-box {
-      width: 100%;
-      background: rgba(239, 68, 68, 0.08);
-      border-left: 4px solid #ef4444;
-      padding: 14px 18px;
-      border-radius: 0 8px 8px 0;
-      box-sizing: border-box;
-    }
-
-    .alert-box-tag {
-      font-size: 11px;
-      font-weight: 800;
-      color: #f87171;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-bottom: 4px;
-    }
-
-    .alert-box-msg {
-      font-size: 14px;
-      color: #fee2e2;
-      margin: 0;
-      font-style: italic;
-      line-height: 1.45;
-    }
-
-    .owner-ai-safety-card {
-      background: rgba(16, 185, 129, 0.07);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      border-radius: 10px;
-      padding: 16px 20px;
-    }
-
-    .safety-badge-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 800;
-      color: #34d399;
-      letter-spacing: 0.04em;
-      margin-bottom: 6px;
-    }
-
-    .safety-desc {
+    .dark-card-desc {
       font-size: 12.5px;
-      color: #d1fae5;
-      line-height: 1.5;
-      margin: 0;
+      color: #cbd5e1;
+      line-height: 1.45;
+      margin-bottom: 18px;
     }
 
-    .safety-desc strong {
+    .dark-card-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .dark-card-footer .avatar-stack-item {
+      border-color: #3f3f46;
+      background: #27272a;
       color: #fff;
     }
 
-    .safety-quote {
-      display: block;
-      margin-top: 4px;
+    .btn-dark-cta {
+      width: 100%;
+      padding: 12px;
+      background: var(--btn-coral);
+      color: #ffffff;
+      border: none;
+      border-radius: 9999px;
+      font-size: 13px;
       font-weight: 700;
-      color: #6ee7b7;
-      font-style: italic;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
     }
 
-    /* Footer */
-    .dashboard-footer {
-      border-top: 1px solid var(--border-subtle);
-      padding: 24px 32px;
-      font-size: 12px;
-      color: var(--text-dim);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .btn-dark-cta:hover {
+      background: var(--btn-coral-hover);
     }
 
+    /* Responsive */
     @media (max-width: 1024px) {
-      .kpi-grid { grid-template-columns: repeat(3, 1fr); }
-      .dual-col-layout { grid-template-columns: 1fr; }
-      .funnel-container { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 640px) {
-      .kpi-grid { grid-template-columns: 1fr 1fr; }
-      .top-navbar { padding: 0 16px; }
-      .dashboard-container { padding: 20px 16px; }
+      .bento-cards-grid {
+        grid-template-columns: 1fr;
+      }
+      .bento-bottom-grid {
+        grid-template-columns: 1fr;
+      }
+      .tablet-shell {
+        flex-direction: column;
+      }
+      .side-rail {
+        width: 100%;
+        flex-direction: row;
+        justify-content: center;
+        gap: 16px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Executive Navbar -->
-  <header class="top-navbar">
-    <div class="brand-group">
-      <div class="brand-badge">&#9818;</div>
-      <div class="brand-meta">
-        <h1>ATITHI <span class="pill">Owner Intelligence</span></h1>
-        <p>The Himalayan Vista &bull; Executive Operations Portal</p>
-      </div>
-    </div>
+  <!-- Tablet Shell Frame (Matching User Reference Image) -->
+  <div class="tablet-shell">
 
-    <div class="nav-actions">
-      <div class="status-pill">
-        <span class="pulse-dot"></span>
-        <span>Live Operations Connected</span>
-      </div>
-      <a href="index.html?openDemo=true" class="btn-nav" style="border-color:rgba(234,179,8,0.4);color:#facc15;">
-        <i data-lucide="play-circle"></i>
-        <span>Live Demo Guide</span>
-      </a>
-      <a href="index.html" class="btn-nav">
-        <i data-lucide="layout-grid"></i>
-        <span>Room Directory</span>
-      </a>
-      <button class="btn-nav" id="btn-refresh-data" title="Force Refresh Metrics">
-        <i data-lucide="refresh-cw"></i>
-        <span>Sync</span>
-      </button>
-    </div>
-  </header>
-
-  <!-- Main Container -->
-  <main class="dashboard-container">
-    
-    <!-- Hero Context Header -->
-    <div class="hero-banner">
-      <div class="hero-title">
-        <h2>Guest Operations Executive Brief</h2>
-        <p>Real-time operational throughput, SLA response, root causes, and AI revenue attribution.</p>
-      </div>
-      <div class="hero-date">
-        <span class="refresh-badge"><i data-lucide="clock" style="width:12px;height:12px;"></i> Auto-sync: 5s</span>
-        <span id="current-timestamp">Today</span>
-      </div>
-    </div>
-
-    <!-- Section 1: TODAY OPERATIONAL THROUGHPUT -->
-    <section>
-      <div class="section-title">
-        <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
-        <span>TODAY</span>
+    <!-- Left Vertical Icon Rail -->
+    <aside class="side-rail">
+      <div class="rail-top-group">
+        <a href="index.html" class="rail-btn" title="Operations Console">
+          <i data-lucide="layout-grid" style="width:20px;height:20px;"></i>
+        </a>
+        <a href="owner.html" class="rail-btn active" title="Owner Executive Suite">
+          <i data-lucide="folder" style="width:20px;height:20px;"></i>
+        </a>
+        <a href="index.html?openDemo=true" class="rail-btn" title="Live Master Demo">
+          <i data-lucide="play-circle" style="width:20px;height:20px;"></i>
+        </a>
+        <a href="http://localhost:8085/qr.html?room=204" target="_blank" class="rail-btn" title="In-Room QR Concierge">
+          <i data-lucide="qr-code" style="width:20px;height:20px;"></i>
+        </a>
+        <a href="http://localhost:8085/" target="_blank" class="rail-btn" title="Customer Voice Intercom">
+          <i data-lucide="phone-call" style="width:20px;height:20px;"></i>
+        </a>
       </div>
 
-      <div class="kpi-grid">
-        <!-- Calls Answered -->
-        <div class="kpi-card today-calls">
-          <div class="kpi-header">
-            <span class="kpi-label">Calls Answered</span>
-            <div class="kpi-icon icon-blue"><i data-lucide="phone-call"></i></div>
-          </div>
-          <div class="kpi-val" id="val-calls">37</div>
-          <div class="kpi-sub">In-room voice intercom & concierge</div>
-        </div>
-
-        <!-- Enquiries Captured -->
-        <div class="kpi-card today-enquiries">
-          <div class="kpi-header">
-            <span class="kpi-label">Enquiries Captured</span>
-            <div class="kpi-icon icon-gold"><i data-lucide="message-square-text"></i></div>
-          </div>
-          <div class="kpi-val" id="val-enquiries">14</div>
-          <div class="kpi-sub">Dining, spa, checkout & tariffs</div>
-        </div>
-
-        <!-- Complaints -->
-        <div class="kpi-card today-complaints">
-          <div class="kpi-header">
-            <span class="kpi-label">Complaints</span>
-            <div class="kpi-icon icon-amber"><i data-lucide="alert-triangle"></i></div>
-          </div>
-          <div class="kpi-val" id="val-complaints">8</div>
-          <div class="kpi-sub">Defects dispatched to staff</div>
-        </div>
-
-        <!-- Resolved -->
-        <div class="kpi-card today-resolved">
-          <div class="kpi-header">
-            <span class="kpi-label">Resolved</span>
-            <div class="kpi-icon icon-emerald"><i data-lucide="check-check"></i></div>
-          </div>
-          <div class="kpi-val" id="val-resolved">7</div>
-          <div class="kpi-sub" id="val-res-pct">87.5% guest resolution index</div>
-        </div>
-
-        <!-- Open -->
-        <div class="kpi-card today-open">
-          <div class="kpi-header">
-            <span class="kpi-label">Open</span>
-            <div class="kpi-icon icon-rose"><i data-lucide="clock"></i></div>
-          </div>
-          <div class="kpi-val" id="val-open">1</div>
-          <div class="kpi-sub">Active steward in progress</div>
-        </div>
+      <div class="rail-bottom-group">
+        <button type="button" class="rail-btn" id="btn-refresh-data" title="Refresh Live Data">
+          <i data-lucide="rotate-cw" style="width:20px;height:20px;"></i>
+        </button>
+        <a href="index.html" class="rail-btn" title="Switch to Operations Grid">
+          <i data-lucide="log-out" style="width:20px;height:20px;"></i>
+        </a>
       </div>
-    </section>
+    </aside>
 
-    <!-- Section 2: RESPONSE SPEED & TOP ISSUES -->
-    <div class="dual-col-layout">
-      
-      <!-- Left Panel: RESPONSE SLA -->
-      <div class="card-panel">
-        <div class="section-title">
-          <i data-lucide="gauge" style="width: 14px; height: 14px;"></i>
-          <span>RESPONSE & SPEED</span>
+    <!-- Main Crisp White Canvas -->
+    <main class="main-canvas">
+
+      <!-- Top Header Navigation -->
+      <header class="canvas-header">
+        <div class="header-welcome">
+          <span>Welcome to</span>
+          <span class="brand-accent">ATITHI Executive</span>
+          <span style="color:#cbd5e1;">&bull;</span>
+          <span style="font-size:13px;">The Himalayan Vista (Mussoorie)</span>
         </div>
 
-        <div class="response-grid">
-          <!-- Median Ack Time -->
-          <div class="response-metric-box">
-            <div class="response-metric-title">
-              <i data-lucide="zap" style="width:14px;height:14px;color:#facc15;"></i>
-              <span>Median Ack Time</span>
-            </div>
-            <div class="response-metric-val" id="val-median-ack">2m 14s</div>
-            <div class="response-metric-tag">
-              <i data-lucide="trending-down" style="width:12px;height:12px;"></i>
-              <span>Target: &lt; 3 mins (Fastest 5%)</span>
+        <div class="header-controls">
+          <!-- Search Pill -->
+          <div class="search-pill-wrap">
+            <input type="text" class="search-pill-input" placeholder="Search inquiries or rooms...">
+            <div class="search-btn-circle">
+              <i data-lucide="search" style="width:13px;height:13px;"></i>
             </div>
           </div>
 
-          <!-- Resolved Before Checkout -->
-          <div class="response-metric-box">
-            <div class="response-metric-title">
-              <i data-lucide="shield-check" style="width:14px;height:14px;color:#34d399;"></i>
-              <span>Resolved Before Checkout</span>
+          <!-- Notification Bell -->
+          <button type="button" class="header-notif-btn" title="Active Alerts">
+            <i data-lucide="bell" style="width:18px;height:18px;"></i>
+            <span class="notif-badge-dot"></span>
+          </button>
+
+          <!-- Owner Profile Avatar & Identity -->
+          <div class="user-profile-badge">
+            <div class="avatar-circle">
+              <span>VS</span>
             </div>
-            <div class="response-metric-val" id="val-resolved-before-co">6/7</div>
-            <div class="response-metric-tag">
-              <i data-lucide="check" style="width:12px;height:12px;"></i>
-              <span>85.7% Closed Loop Complete</span>
+            <div class="user-name-box">
+              <div class="user-name">Vikram Singhania</div>
+              <div class="user-role">Managing Owner &bull; <span id="current-timestamp">Live</span></div>
             </div>
           </div>
         </div>
+      </header>
 
-        <!-- Additional Operational Metrics -->
-        <div class="issue-item" style="margin-top: 4px;">
-          <div class="issue-top-row">
-            <span style="font-size:13px;color:var(--text-muted);font-weight:600;">Average Resolution Duration</span>
-            <span style="font-size:13px;font-weight:700;color:#fff;" id="val-avg-res">11m 45s</span>
-          </div>
-          <div class="progress-bar-bg" style="margin-top:6px;">
-            <div class="progress-bar-fill" style="width: 82%; background: #3b82f6;"></div>
-          </div>
-        </div>
-
-        <div class="issue-item">
-          <div class="issue-top-row">
-            <span style="font-size:13px;color:var(--text-muted);font-weight:600;">SLA Compliance Threshold</span>
-            <span style="font-size:13px;font-weight:700;color:#34d399;" id="val-sla-pct">95.2%</span>
-          </div>
-          <div class="progress-bar-bg" style="margin-top:6px;">
-            <div class="progress-bar-fill" style="width: 95.2%; background: #10b981;"></div>
-          </div>
+      <!-- Section Title & Filter Pills Row -->
+      <div class="title-filter-strip">
+        <h2 class="section-title">My Operations</h2>
+        <div class="filter-pills-row">
+          <button type="button" class="pill-btn active" data-filter="all">All Operations</button>
+          <button type="button" class="pill-btn" data-filter="revenue">Direct Revenue</button>
+          <button type="button" class="pill-btn" data-filter="complaints">Service Tickets</button>
+          <button type="button" class="pill-btn" data-filter="sla">Response SLA</button>
         </div>
       </div>
 
-      <!-- Right Panel: TOP ISSUES (Root Cause Breakdown) -->
-      <div class="card-panel">
-        <div class="section-title">
-          <i data-lucide="pie-chart" style="width: 14px; height: 14px;"></i>
-          <span>TOP ISSUES</span>
-        </div>
+      <!-- Bento Cards Top Grid (3 Cards) -->
+      <div class="bento-cards-grid">
 
-        <div class="issues-list" id="issues-container">
-          <!-- Hot Water -->
-          <div class="issue-item">
-            <div class="issue-top-row">
-              <div class="issue-name-grp">
-                <i data-lucide="thermometer-snowflake" style="color:#60a5fa;width:16px;height:16px;"></i>
-                <span>Hot Water</span>
+        <!-- 1. Yellow Bento Card: Inbound Bookings & Direct Revenue -->
+        <div class="bento-card card-yellow">
+          <div>
+            <div class="card-header-row">
+              <span class="tag-capsule tag-dark">Direct Revenue</span>
+              <i data-lucide="bookmark" class="card-bookmark-icon" style="width:18px;height:18px;"></i>
+            </div>
+            <h3 class="bento-card-title">Booking Enquiries &amp; Attributed Leads</h3>
+          </div>
+
+          <div>
+            <div class="card-progress-box">
+              <div class="progress-meta-row">
+                <span>Funnel Conversion</span>
+                <span><strong id="stat-funnel-booked">2</strong> / <span id="stat-funnel-enquiries">14</span> Qualified</span>
               </div>
-              <span class="issue-count-badge">4</span>
-            </div>
-            <div class="progress-bar-bg">
-              <div class="progress-bar-fill" style="width: 50%;"></div>
-            </div>
-          </div>
-
-          <!-- AC -->
-          <div class="issue-item">
-            <div class="issue-top-row">
-              <div class="issue-name-grp">
-                <i data-lucide="wind" style="color:#34d399;width:16px;height:16px;"></i>
-                <span>AC / Heating</span>
-              </div>
-              <span class="issue-count-badge">2</span>
-            </div>
-            <div class="progress-bar-bg">
-              <div class="progress-bar-fill" style="width: 25%;"></div>
-            </div>
-          </div>
-
-          <!-- Wi-Fi -->
-          <div class="issue-item">
-            <div class="issue-top-row">
-              <div class="issue-name-grp">
-                <i data-lucide="wifi" style="color:#facc15;width:16px;height:16px;"></i>
-                <span>Wi-Fi</span>
-              </div>
-              <span class="issue-count-badge">1</span>
-            </div>
-            <div class="progress-bar-bg">
-              <div class="progress-bar-fill" style="width: 12.5%;"></div>
-            </div>
-          </div>
-
-          <!-- Housekeeping -->
-          <div class="issue-item">
-            <div class="issue-top-row">
-              <div class="issue-name-grp">
-                <i data-lucide="sparkles" style="color:#f472b6;width:16px;height:16px;"></i>
-                <span>Housekeeping</span>
-              </div>
-              <span class="issue-count-badge">1</span>
-            </div>
-            <div class="progress-bar-bg">
-              <div class="progress-bar-fill" style="width: 12.5%;"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Section 2.5: PHASE 9 — OPERATIONAL INTELLIGENCE & SHARED-SYSTEM INCIDENTS -->
-    <section class="intelligence-panel" style="margin-top: 32px;">
-      <div class="section-title">
-        <i data-lucide="shield-alert" style="width: 14px; height: 14px; color:#ef4444;"></i>
-        <span>PHASE 9 &bull; OPERATIONAL INTELLIGENCE &amp; PATTERN DETECTION</span>
-      </div>
-
-      <div class="intelligence-card">
-        <div class="intelligence-top">
-          <div class="intel-badge-grp">
-            <span class="intel-pulse"><span class="dot-red"></span> CRITICAL ANOMALY DETECTED</span>
-            <span class="intel-subsys-pill">Central Heating Loop</span>
-          </div>
-          <div class="intel-status-pill" id="owner-intel-status">
-            Awaiting Human Verification
-          </div>
-        </div>
-
-        <div class="pattern-flow-diagram">
-          <div class="flow-rooms-row">
-            <div class="room-incident-card">
-              <span class="room-inc-no">Room 204</span>
-              <span class="room-inc-issue">Hot Water</span>
-              <span class="room-inc-channel">via Voice</span>
-            </div>
-            <div class="flow-rooms-arrow">&rarr;</div>
-            <div class="room-incident-card">
-              <span class="room-inc-no">Room 307</span>
-              <span class="room-inc-issue">Hot Water</span>
-              <span class="room-inc-channel">via QR</span>
-            </div>
-            <div class="flow-rooms-arrow">&rarr;</div>
-            <div class="room-incident-card">
-              <span class="room-inc-no">Room 412</span>
-              <span class="room-inc-issue">Hot Water</span>
-              <span class="room-inc-channel">via Voice</span>
-            </div>
-          </div>
-
-          <div class="flow-down-indicator">
-            <div class="down-line"></div>
-            <div class="pattern-detected-chip">&#9889; PATTERN DETECTED &bull; Potential shared-system incident</div>
-            <div class="down-line"></div>
-          </div>
-
-          <div class="intel-alert-box">
-            <div class="alert-box-tag">&#128680; ATITHI ALERT</div>
-            <p class="alert-box-msg">&ldquo;Three rooms reported hot-water issues within 17 minutes. Please investigate the central heating system.&rdquo;</p>
-          </div>
-        </div>
-
-        <!-- AI Safety & Operational Protocol Callout -->
-        <div class="owner-ai-safety-card">
-          <div class="safety-badge-title">
-            <i data-lucide="shield-check" style="width:16px;height:16px;color:#34d399;"></i>
-            <span>AI SAFETY &amp; OPERATIONAL INTELLIGENCE PRINCIPLE</span>
-          </div>
-          <p class="safety-desc">
-            ATITHI does <strong>NOT</strong> claim the boiler is broken. In building physical infrastructure, automated software diagnoses risk costly false alarms. Instead, ATITHI flags:
-            <span class="safety-quote">&ldquo;Potential shared-system issue &mdash; human verification required.&rdquo;</span>
-            Empowering on-duty Chief Engineering with verified spatial clusters before negative guest reviews escalate.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Section 3: OPPORTUNITIES & BUSINESS MODEL REVENUE FUNNEL -->
-    <section class="revenue-panel">
-      <div class="section-title">
-        <i data-lucide="sparkles" style="width: 14px; height: 14px;"></i>
-        <span>OPPORTUNITIES &bull; DIRECT REVENUE ATTRIBUTION</span>
-      </div>
-
-      <div class="funnel-container">
-        <!-- Funnel Progression -->
-        <div class="funnel-steps">
-          
-          <!-- Step 1: 14 Booking Enquiries -->
-          <div class="funnel-card">
-            <div class="funnel-left">
-              <div class="funnel-num">1</div>
-              <div class="funnel-text">
-                <h4>Booking Enquiries Captured</h4>
-                <p>In-Room voice intercom & online concierge queries</p>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: 58%;"></div>
               </div>
             </div>
-            <div class="funnel-stat" id="stat-funnel-enquiries">14</div>
-          </div>
 
-          <div class="funnel-arrow-down">
-            <i data-lucide="arrow-down"></i>
-          </div>
-
-          <!-- Step 2: 4 Qualified -->
-          <div class="funnel-card">
-            <div class="funnel-left">
-              <div class="funnel-num">2</div>
-              <div class="funnel-text">
-                <h4>Qualified Booking Intents</h4>
-                <p>Dates confirmed, tariffs accepted & room type matched</p>
+            <div class="card-footer-row">
+              <div class="avatar-stack">
+                <div class="avatar-stack-item">AS</div>
+                <div class="avatar-stack-item">RP</div>
+                <div class="avatar-stack-item">SV</div>
+                <div class="avatar-stack-item count">+14</div>
               </div>
+              <a href="index.html?openDemo=true" class="btn-action-coral">
+                <span id="val-potential-rev">&#8377;18,000</span>
+                <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+              </a>
             </div>
-            <div class="funnel-stat" id="stat-funnel-qualified">4</div>
           </div>
-
-          <div class="funnel-arrow-down">
-            <i data-lucide="arrow-down"></i>
-          </div>
-
-          <!-- Step 3: 2 Bookings Attributed -->
-          <div class="funnel-card" style="border-color: rgba(234, 179, 8, 0.4); background: rgba(234, 179, 8, 0.05);">
-            <div class="funnel-left">
-              <div class="funnel-num" style="background: var(--gold-gradient); color: #000;">3</div>
-              <div class="funnel-text">
-                <h4 style="color:#facc15;">Direct Bookings Attributed</h4>
-                <p>Direct bookings booked via ATITHI without OTA commission</p>
-              </div>
-            </div>
-            <div class="funnel-stat" id="stat-funnel-booked" style="font-size: 26px;">2</div>
-          </div>
-
         </div>
 
-        <!-- Right Side: Revenue Spotlight -->
-        <div class="revenue-spotlight">
-          <div class="rev-hero-top">
-            <p>Potential Revenue Attributed</p>
-            <h3 id="val-potential-rev">&#8377;18,000</h3>
-            <span class="sub">Direct guest room tariff generated by ATITHI</span>
+        <!-- 2. Purple Bento Card: Complaint Resolution & Speed -->
+        <div class="bento-card card-purple">
+          <div>
+            <div class="card-header-row">
+              <span class="tag-capsule tag-yellow">Service Resolution</span>
+              <i data-lucide="bookmark" class="card-bookmark-icon" style="width:18px;height:18px;"></i>
+            </div>
+            <h3 class="bento-card-title">Closed-Loop Complaint Resolution</h3>
           </div>
 
-          <!-- Business Model Slide Direct Alignment -->
-          <div class="business-callout">
-            <p>
-              <strong>Direct Business Model Alignment:</strong><br>
-              Zero OTA Commissions saved: <strong>&#8377;3,240 (18%)</strong>.<br>
-              24/7 AI capture of high-intent guest queries delivers <strong>9.2x Monthly SaaS ROI</strong> directly to the hotel owner.
+          <div>
+            <div class="card-progress-box">
+              <div class="progress-meta-row">
+                <span>Before Checkout Index</span>
+                <span><strong id="val-resolved-before-co">6/7</strong> Resolved (<span id="val-res-pct">87.5%</span>)</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: 87.5%;"></div>
+              </div>
+            </div>
+
+            <div class="card-footer-row">
+              <div class="avatar-stack">
+                <div class="avatar-stack-item">204</div>
+                <div class="avatar-stack-item">307</div>
+                <div class="avatar-stack-item">108</div>
+                <div class="avatar-stack-item count">+8</div>
+              </div>
+              <a href="index.html" class="btn-action-coral">
+                <span><span id="val-resolved">7</span> Resolved</span>
+                <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Cyan Bento Card: Speed & Acknowledgment SLA -->
+        <div class="bento-card card-cyan">
+          <div>
+            <div class="card-header-row">
+              <span class="tag-capsule tag-purple">Response SLA</span>
+              <i data-lucide="bookmark" class="card-bookmark-icon" style="width:18px;height:18px;"></i>
+            </div>
+            <h3 class="bento-card-title">Median Staff Dispatch &amp; Speed</h3>
+          </div>
+
+          <div>
+            <div class="card-progress-box">
+              <div class="progress-meta-row">
+                <span>Median Acknowledgment</span>
+                <span><strong id="val-median-ack">2m 14s</strong> (<span id="val-calls">37</span> calls)</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: 95%;"></div>
+              </div>
+            </div>
+
+            <div class="card-footer-row">
+              <div class="avatar-stack">
+                <div class="avatar-stack-item">RN</div>
+                <div class="avatar-stack-item">SR</div>
+                <div class="avatar-stack-item">VN</div>
+                <div class="avatar-stack-item count">+24</div>
+              </div>
+              <a href="index.html" class="btn-action-coral">
+                <span id="val-avg-res">11m 45s Avg</span>
+                <i data-lucide="arrow-right" style="width:14px;height:14px;"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bento Bottom Grid (2 Columns: Left List + Right Dark Bento Card) -->
+      <div class="bento-bottom-grid">
+
+        <!-- Left Column: Recent Operational Stream -->
+        <div class="bottom-white-card">
+          <div class="card-section-head">
+            <h3 class="card-section-title">Recent Operational Interactions</h3>
+            <a href="index.html" class="link-view-all">View all interactions</a>
+          </div>
+
+          <div class="activity-list" id="activity-list-container">
+            <!-- Row 1 -->
+            <div class="activity-row">
+              <div class="activity-main-info">
+                <span class="activity-title">01. Inbound Room Booking Call (2 Guests)</span>
+                <span class="activity-sub">Heritage Deluxe Room &bull; Tag: Pay on Property</span>
+              </div>
+              <div class="activity-staff">
+                <div class="staff-mini-avatar">&#128104;&#8205;&#128188;</div>
+                <span>Front Desk</span>
+              </div>
+              <div class="activity-duration">3 min ago</div>
+            </div>
+
+            <!-- Row 2 -->
+            <div class="activity-row">
+              <div class="activity-main-info">
+                <span class="activity-title">02. Room 204 Hot Water Servicing &amp; Follow-Up</span>
+                <span class="activity-sub">Guest confirmed &ldquo;Yes, It&rsquo;s Fixed!&rdquo; &bull; Closed</span>
+              </div>
+              <div class="activity-staff">
+                <div class="staff-mini-avatar">&#128295;</div>
+                <span>Rajesh Negi</span>
+              </div>
+              <div class="activity-duration">8 min ago</div>
+            </div>
+
+            <!-- Row 3 -->
+            <div class="activity-row">
+              <div class="activity-main-info">
+                <span class="activity-title">03. In-Room QR Query: Checkout Policy</span>
+                <span class="activity-sub">Standard checkout 11:00 AM &bull; Room 204</span>
+              </div>
+              <div class="activity-staff">
+                <div class="staff-mini-avatar">&#128241;</div>
+                <span>In-Room QR</span>
+              </div>
+              <div class="activity-duration">14 min ago</div>
+            </div>
+
+            <!-- Row 4 -->
+            <div class="activity-row">
+              <div class="activity-main-info">
+                <span class="activity-title">04. Extra Fresh Linens &amp; Towels Requested</span>
+                <span class="activity-sub">Housekeeping SLA 15 min &bull; Delivered</span>
+              </div>
+              <div class="activity-staff">
+                <div class="staff-mini-avatar">&#129533;</div>
+                <span>Sunita Rawat</span>
+              </div>
+              <div class="activity-duration">22 min ago</div>
+            </div>
+
+            <!-- Row 5 -->
+            <div class="activity-row">
+              <div class="activity-main-info">
+                <span class="activity-title">05. Mall Road &amp; Kempty Falls Taxi Request</span>
+                <span class="activity-sub">Travel Desk &bull; Fixed Rate Tariff ₹1,800</span>
+              </div>
+              <div class="activity-staff">
+                <div class="staff-mini-avatar">&#128661;</div>
+                <span>Concierge Desk</span>
+              </div>
+              <div class="activity-duration">36 min ago</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Dark Contrast Bento Card (Operational Anomaly & AI Safety) -->
+        <div class="bottom-dark-card">
+          <div>
+            <span class="tag-capsule">Operational Intelligence</span>
+            <h3 class="dark-card-title">Shared System Incident Pattern</h3>
+            <p class="dark-card-desc">
+              Three rooms reported hot-water issues within 17 minutes. Investigating central heating system with Human-in-the-Loop engineering sign-off.
             </p>
           </div>
+
+          <div class="dark-card-footer">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:11px;color:#94a3b8;">Impacted Rooms:</span>
+              <div class="avatar-stack">
+                <div class="avatar-stack-item">204</div>
+                <div class="avatar-stack-item">307</div>
+                <div class="avatar-stack-item">412</div>
+                <div class="avatar-stack-item count" id="owner-intel-status" style="background:#f97316;color:#fff;">Active</div>
+              </div>
+            </div>
+
+            <a href="index.html" class="btn-dark-cta" style="text-decoration:none;">
+              Investigate System Incident
+            </a>
+          </div>
         </div>
 
       </div>
 
-      <!-- Live Attributed Bookings List -->
-      <div class="attributed-table-wrap">
-        <table class="attributed-table">
-          <thead>
-            <tr>
-              <th>Booking ID</th>
-              <th>Room #</th>
-              <th>Guest Name</th>
-              <th>Tariff</th>
-              <th>Payment Tag</th>
-              <th>Channel</th>
-            </tr>
-          </thead>
-          <tbody id="attributed-bookings-tbody">
-            <tr>
-              <td><strong>#BK-109-4479</strong></td>
-              <td>Room 109 (Heritage King)</td>
-              <td>Kavita Sharma</td>
-              <td>&#8377;9,600</td>
-              <td><span class="tag-pay-property">&#127976; Pay on Property</span></td>
-              <td>ATITHI Voice Concierge</td>
-            </tr>
-            <tr>
-              <td><strong>#BK-102-4101</strong></td>
-              <td>Room 102 (Deluxe Twin)</td>
-              <td>Rahul Verma</td>
-              <td>&#8377;5,200</td>
-              <td><span class="tag-pay-property">&#127976; Pay on Property</span></td>
-              <td>ATITHI In-Room Chat</td>
-            </tr>
-            <tr>
-              <td><strong>#BK-106-3936</strong></td>
-              <td>Room 106 (Heritage King)</td>
-              <td>Kabir Saxena</td>
-              <td>&#8377;9,600</td>
-              <td><span class="tag-pay-property">&#127976; Pay on Property</span></td>
-              <td>ATITHI Voice Concierge</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-    </section>
-
-  </main>
-
-  <!-- Footer -->
-  <footer class="dashboard-footer">
-    <span>The Himalayan Vista &bull; ATITHI Enterprise Executive Suite</span>
-    <span>Connected to Hotel Operations System &bull; Real-Time Sync</span>
-  </footer>
+    </main>
+  </div>
 
   <script>
-    // Lucide Icons Initialization
+    // Initialize Lucide Icons
     lucide.createIcons();
 
-    // DOM Elements
+    // DOM Elements for Live Data Binding
     const dom = {
       calls: document.getElementById('val-calls'),
-      enquiries: document.getElementById('val-enquiries'),
-      complaints: document.getElementById('val-complaints'),
+      enquiries: document.getElementById('stat-funnel-enquiries'),
+      booked: document.getElementById('stat-funnel-booked'),
       resolved: document.getElementById('val-resolved'),
-      open: document.getElementById('val-open'),
+      resolvedBeforeCo: document.getElementById('val-resolved-before-co'),
       resPct: document.getElementById('val-res-pct'),
       medianAck: document.getElementById('val-median-ack'),
-      resolvedBeforeCo: document.getElementById('val-resolved-before-co'),
       avgRes: document.getElementById('val-avg-res'),
-      slaPct: document.getElementById('val-sla-pct'),
-      funnelEnquiries: document.getElementById('stat-funnel-enquiries'),
-      funnelQualified: document.getElementById('stat-funnel-qualified'),
-      funnelBooked: document.getElementById('stat-funnel-booked'),
       potentialRev: document.getElementById('val-potential-rev'),
-      bookingsTbody: document.getElementById('attributed-bookings-tbody'),
+      intelStatus: document.getElementById('owner-intel-status'),
       timestamp: document.getElementById('current-timestamp'),
-      btnRefresh: document.getElementById('btn-refresh-data'),
-      intelStatus: document.getElementById('owner-intel-status')
+      btnRefresh: document.getElementById('btn-refresh-data')
     };
 
     async function fetchOwnerAnalytics() {
       try {
         const res = await fetch('http://127.0.0.1:8001/api/owner/analytics');
-        if (!res.ok) throw new Error('Network error: ' + res.status);
+        if (!res.ok) throw new Error('Status: ' + res.status);
         const data = await res.json();
         renderAnalytics(data);
-      } catch (err) {
-        console.warn('Could not fetch from backend, showing fallback:', err);
-      }
-      fetchIncidents();
-    }
-
-    async function fetchIncidents() {
-      try {
-        const res = await fetch('http://127.0.0.1:8001/api/intelligence/incidents');
-        if (!res.ok) return;
-        const data = await res.json();
-        const incs = (data.incidents || []).filter(i => i.status !== 'dismissed');
-        if (dom.intelStatus) {
-          if (incs.length > 0) {
-            const inc = incs[0];
-            if (inc.status === 'investigating') {
-              dom.intelStatus.textContent = 'Investigating • Chief Engineer Assigned';
-              dom.intelStatus.style.background = 'rgba(245, 158, 11, 0.2)';
-              dom.intelStatus.style.color = '#fcd34d';
-              dom.intelStatus.style.borderColor = 'rgba(245, 158, 11, 0.4)';
-            } else if (inc.status === 'verified_resolved') {
-              dom.intelStatus.textContent = 'Verified & Cleared by Engineering';
-              dom.intelStatus.style.background = 'rgba(16, 185, 129, 0.2)';
-              dom.intelStatus.style.color = '#6ee7b7';
-              dom.intelStatus.style.borderColor = 'rgba(16, 185, 129, 0.4)';
-            } else {
-              dom.intelStatus.textContent = 'Awaiting Human Verification';
-              dom.intelStatus.style.background = 'rgba(239, 68, 68, 0.2)';
-              dom.intelStatus.style.color = '#fca5a5';
-              dom.intelStatus.style.borderColor = 'rgba(239, 68, 68, 0.4)';
-            }
-          }
-        }
       } catch (e) {
-        console.warn('Could not fetch incidents in owner dashboard:', e);
+        console.warn('Backend live sync fallback:', e);
       }
     }
 
     function renderAnalytics(data) {
       if (!data) return;
 
-      // 1. TODAY
       if (data.today) {
-        dom.calls.textContent = data.today.calls_answered || 37;
-        dom.enquiries.textContent = data.today.enquiries_captured || 14;
-        dom.complaints.textContent = data.today.complaints || 8;
-        dom.resolved.textContent = data.today.resolved || 7;
-        dom.open.textContent = data.today.open !== undefined ? data.today.open : 1;
-        dom.resPct.textContent = `${data.today.resolution_rate_pct || 87.5}% guest resolution index`;
+        if (dom.calls) dom.calls.textContent = data.today.calls_answered || 37;
+        if (dom.resolved) dom.resolved.textContent = `${data.today.resolved || 7} Resolved`;
+        if (dom.resPct) dom.resPct.textContent = `${data.today.resolution_rate_pct || 87.5}%`;
       }
 
-      // 2. RESPONSE
       if (data.response) {
-        dom.medianAck.textContent = data.response.median_ack_time || '2m 14s';
-        dom.resolvedBeforeCo.textContent = data.response.resolved_before_checkout || '6/7';
-        dom.avgRes.textContent = data.response.avg_resolution_time || '11m 45s';
-        dom.slaPct.textContent = `${data.response.sla_compliance_pct || 95.2}%`;
+        if (dom.medianAck) dom.medianAck.textContent = data.response.median_ack_time || '2m 14s';
+        if (dom.resolvedBeforeCo) dom.resolvedBeforeCo.textContent = data.response.resolved_before_checkout || '6/7';
+        if (dom.avgRes) dom.avgRes.textContent = `${data.response.avg_resolution_time || '11m 45s'} Avg`;
       }
 
-      // 3. OPPORTUNITIES
       if (data.opportunities) {
-        dom.funnelEnquiries.textContent = data.opportunities.enquiries || 14;
-        dom.funnelQualified.textContent = data.opportunities.qualified || 4;
-        dom.funnelBooked.textContent = data.opportunities.attributed_bookings || 2;
-        
-        const rev = data.opportunities.potential_revenue_inr || 18000;
-        dom.potentialRev.innerHTML = `&#8377;${rev.toLocaleString('en-IN')}`;
-
-        if (data.opportunities.recent_bookings && data.opportunities.recent_bookings.length > 0) {
-          dom.bookingsTbody.innerHTML = '';
-          data.opportunities.recent_bookings.forEach(b => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-              <td><strong>#${b.booking_id || 'BK-LIVE'}</strong></td>
-              <td>Room ${b.room_number}</td>
-              <td>${b.guest_name || 'Guest'}</td>
-              <td>${b.tariff || '₹9,600'}</td>
-              <td><span class="tag-pay-property">&#127976; Pay on Property</span></td>
-              <td>${b.channel || 'ATITHI Voice Concierge'}</td>
-            `;
-            dom.bookingsTbody.appendChild(tr);
-          });
+        if (dom.enquiries) dom.enquiries.textContent = data.opportunities.enquiries || 14;
+        if (dom.booked) dom.booked.textContent = data.opportunities.attributed_bookings || 2;
+        if (dom.potentialRev) {
+          const rev = data.opportunities.potential_revenue_inr || 18000;
+          dom.potentialRev.innerHTML = `&#8377;${rev.toLocaleString('en-IN')}`;
         }
       }
 
-      // Timestamp
-      const now = new Date();
-      dom.timestamp.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      if (dom.timestamp) {
+        dom.timestamp.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
     }
 
-    // Initial Load & Interval
-    fetchOwnerAnalytics();
-    setInterval(fetchOwnerAnalytics, 5000);
+    // Filter pills interactive toggle
+    document.querySelectorAll('.pill-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
 
-    // Refresh Button Click
     if (dom.btnRefresh) {
       dom.btnRefresh.addEventListener('click', () => {
         fetchOwnerAnalytics();
       });
     }
+
+    // Initial fetch & 5s live polling
+    fetchOwnerAnalytics();
+    setInterval(fetchOwnerAnalytics, 5000);
   </script>
 </body>
 </html>
