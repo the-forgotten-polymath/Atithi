@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATITHI • In-Room AI Voice & Chat Concierge</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Agora RTC Web SDK -->
+    <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.22.0.js"></script>
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="luxury-backdrop">
+        <div class="ambient-glow glow-1"></div>
+        <div class="ambient-glow glow-2"></div>
+    </div>
+
+    <div class="portal-wrapper">
+        <!-- Top Navigation / Luxury Branding -->
+        <header class="intercom-header">
+            <div class="hotel-brand">
+                <div class="hotel-badge">
+                    <i data-lucide="sparkles"></i>
+                </div>
+                <div>
+                    <h1 class="hotel-title">THE HIMALAYAN VISTA</h1>
+                    <p class="hotel-subtitle">Atithi Concierge • 24/7 In-Room Intercom & Chat</p>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <div class="room-selector-pill">
+                    <i data-lucide="bed-double"></i>
+                    <select id="roomSelector" title="Select Room">
+                        <option value="204" selected>Room 204 • Siddharth Verma (Executive Valley)</option>
+                        <option value="108">Room 108 • Ananya Iyer (Deluxe Twin)</option>
+                        <option value="101">Room 101 • Rajesh Sharma (Heritage King)</option>
+                        <option value="104">Room 104 • Deluxe Valley View</option>
+                        <option value="201">Room 201 • Rohan Malhotra (Executive King)</option>
+                        <option value="301">Room 301 • Devendra Joshi (Imperial Suite)</option>
+                    </select>
+                </div>
+                <button class="icon-btn" id="openSettingsBtn" title="Connection Settings">
+                    <i data-lucide="sliders"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Mode Switcher: Voice Intercom vs AI Concierge Chat -->
+        <div class="mode-switcher-strip">
+            <div class="mode-tabs">
+                <button class="mode-tab active" id="tabVoiceMode">
+                    <i data-lucide="phone-call"></i>
+                    <span>Voice Intercom (Instant Call)</span>
+                </button>
+                <button class="mode-tab" id="tabChatMode">
+                    <i data-lucide="message-square-text"></i>
+                    <span>In-Room Concierge Chat</span>
+                </button>
+            </div>
+            <div class="live-status-pill">
+                <span class="status-indicator-dot"></span>
+                <span id="headerEngineStatus">24/7 Operations Connected</span>
+            </div>
+        </div>
+
+        <!-- Real-Time Ticket & Loop Tracker Widget -->
+        <div class="active-ticket-tracker" id="activeTicketTracker" style="display: none;">
+            <div class="tracker-card">
+                <div class="tracker-header">
+                    <div class="tracker-title-group">
+                        <i data-lucide="clipboard-list" class="tracker-icon"></i>
+                        <div>
+                            <div class="tracker-id-row">
+                                <span class="tracker-tkt-num" id="tktNumDisplay">TKT-204-001</span>
+                                <span class="tracker-badge" id="tktStatusBadge">OPEN</span>
+                            </div>
+                            <span class="tracker-title" id="tktTitleDisplay">Hot Water Not Working</span>
+                        </div>
+                    </div>
+                    <div class="tracker-meta">
+                        <span class="tracker-dept" id="tktDeptDisplay">Engineering & Maintenance</span>
+                        <span class="tracker-time" id="tktEtaDisplay">SLA: 15 Mins</span>
+                    </div>
+                </div>
+
+                <!-- Proactive Closed-Loop Confirmation Action (Appears when status is RESOLVED) -->
+                <div class="closed-loop-prompt" id="closedLoopPrompt" style="display: none;">
+                    <div class="prompt-content">
+                        <div class="prompt-icon-ring">
+                            <i data-lucide="check-check"></i>
+                        </div>
+                        <div class="prompt-text-group">
+                            <h4 class="prompt-heading">ATITHI Follow-Up</h4>
+                            <p class="prompt-desc" id="closedLoopMsg">Our team has serviced the hot water in your room. Is everything working fine now?</p>
+                        </div>
+                    </div>
+                    <div class="prompt-buttons">
+                        <button class="btn-prompt-confirm" id="btnConfirmResolution">
+                            <i data-lucide="thumbs-up"></i>
+                            <span>Yes, It's Fixed!</span>
+                        </button>
+                        <button class="btn-prompt-dismiss" id="btnIssueNotResolved">
+                            <i data-lucide="refresh-cw"></i>
+                            <span>Still having issues</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VOICE CALLING STAGE -->
+        <main class="call-stage" id="voiceStage">
+            <!-- Central Audio Visualizer Orb -->
+            <div class="orb-container">
+                <div class="orb-wave wave-3"></div>
+                <div class="orb-wave wave-2"></div>
+                <div class="orb-wave wave-1"></div>
+                <div class="voice-orb" id="voiceOrb">
+                    <div class="orb-core">
+                        <i data-lucide="mic" id="orbMicIcon"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status & Call Duration -->
+            <div class="status-panel">
+                <div class="call-badge" id="callStatusBadge">
+                    <span class="status-dot"></span>
+                    <span id="callStatusText">Ready to Connect</span>
+                </div>
+                <div class="call-timer" id="callTimer">00:00</div>
+                <p class="hint-text" id="callHintText">
+                    Press the button below to speak directly with your AI Hotel Concierge.
+                </p>
+            </div>
+
+            <!-- Audio Waveform Bars (Active during speech) -->
+            <div class="waveform-container" id="waveform">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+
+            <!-- Action Controls -->
+            <div class="call-controls">
+                <button class="control-btn mute-btn" id="muteBtn" disabled title="Mute Microphone">
+                    <i data-lucide="mic"></i>
+                    <span>Mic On</span>
+                </button>
+
+                <button class="call-btn" id="mainCallBtn">
+                    <div class="call-btn-inner">
+                        <i data-lucide="phone-call" id="callBtnIcon"></i>
+                        <span id="callBtnText">Call Front Desk</span>
+                    </div>
+                </button>
+
+                <button class="control-btn speaker-btn" id="speakerBtn" disabled title="Speaker Status">
+                    <i data-lucide="volume-2"></i>
+                    <span>Speaker</span>
+                </button>
+            </div>
+
+            <!-- Quick Suggestion Pills -->
+            <div class="suggestions-dock">
+                <span class="sugg-label">Try asking:</span>
+                <button class="sugg-chip voice-sugg-chip">"Room 204 mein garam paani nahi aa raha."</button>
+                <button class="sugg-chip voice-sugg-chip">"Can I get extra warm towels for room 108?"</button>
+                <button class="sugg-chip voice-sugg-chip">"What time is breakfast served?"</button>
+            </div>
+        </main>
+
+        <!-- CHAT CONCIERGE STAGE (In-Room Intelligence) -->
+        <main class="chat-stage" id="chatStage" style="display: none;">
+            <div class="chat-header-bar">
+                <div class="chat-title-group">
+                    <i data-lucide="bot"></i>
+                    <div>
+                        <h3 class="chat-heading">ATITHI Concierge Chat</h3>
+                        <p class="chat-sub">Instant Grounded Answers & In-Room Service Requests</p>
+                    </div>
+                </div>
+                <button class="btn-clear-chat" id="btnClearChat" title="Clear Chat History">
+                    <i data-lucide="trash-2"></i>
+                </button>
+            </div>
+
+            <!-- Chat Message Thread -->
+            <div class="chat-stream" id="chatStream">
+                <div class="chat-bubble bot">
+                    <div class="bubble-avatar">
+                        <i data-lucide="sparkles"></i>
+                    </div>
+                    <div class="bubble-content">
+                        <p class="bubble-text">Namaste! I am ATITHI, your in-room AI concierge for The Himalayan Vista. How may I assist you today?</p>
+                        <span class="bubble-time">Just now</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Quick Prompt Suggestions -->
+            <div class="chat-suggestions-strip">
+                <button class="chat-sugg-pill" data-query="Room 204 mein garam paani nahi aa raha.">
+                    <span>🔥 Room 204 garam paani</span>
+                </button>
+                <button class="chat-sugg-pill" data-query="Please send two extra bath towels to room 108.">
+                    <span>🧼 Room 108 extra towels</span>
+                </button>
+                <button class="chat-sugg-pill" data-query="Breakfast kitne baje tak hai?">
+                    <span>🍳 Breakfast timings?</span>
+                </button>
+                <button class="chat-sugg-pill" data-query="What is the guest Wi-Fi password?">
+                    <span>📶 Wi-Fi password?</span>
+                </button>
+            </div>
+
+            <!-- Chat Input Box -->
+            <form class="chat-input-bar" id="chatInputForm">
+                <input type="text" id="chatInput" placeholder="Type in Hindi or English (e.g. 'Room 204 mein AC band hai', 'Send water')..." autocomplete="off" />
+                <button type="submit" id="btnSendChat" class="btn-send-chat" title="Send message">
+                    <i data-lucide="send"></i>
+                </button>
+            </form>
+        </main>
+
+        <!-- Live Activity Log -->
+        <footer class="activity-drawer">
+            <div class="drawer-header">
+                <div class="drawer-title">
+                    <i data-lucide="activity"></i>
+                    <span>Real-time Intercom Stream & Activity</span>
+                </div>
+                <span class="channel-pill" id="currentChannelPill">Channel: Standby</span>
+            </div>
+            <div class="activity-feed" id="activityFeed">
+                <div class="log-entry system">
+                    <span class="log-time">10:00:00</span>
+                    <span class="log-msg">System initialized. Connected to ATITHI Hotel Intelligence. Ready for guest requests.</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <i data-lucide="settings-2"></i>
+                    <h3>Intercom Voice Configuration</h3>
+                </div>
+                <button class="close-modal-btn" id="closeSettingsBtn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Agora App ID</label>
+                    <input type="text" id="cfgAppId" value="1932b7112f574a56a8cf07a4bae9d0f1" readonly class="readonly-input">
+                </div>
+
+                <div class="form-group">
+                    <label>Conversational AI Pipeline ID (Agent ID)</label>
+                    <input type="text" id="cfgPipelineId" value="b8a99367a95c4cd2a8a4d5a9ebfbc849" placeholder="Enter Pipeline ID">
+                    <span class="input-helper">Preset agent: <code>b8a99367a95c4cd2a8a4d5a9ebfbc849</code></span>
+                </div>
+
+                <div class="form-group">
+                    <label>Agora App Certificate (If Token Required)</label>
+                    <input type="password" id="cfgAppCertificate" placeholder="Paste 32-character App Certificate from Agora Console">
+                    <span class="input-helper">Required if your project has App Certificate security enabled. Automatically signs RTC tokens.</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Channel Prefix</label>
+                    <input type="text" id="cfgChannelPrefix" value="atithi_room" placeholder="Channel Prefix">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" id="cancelSettingsBtn">Close</button>
+                <button class="btn-primary" id="saveSettingsBtn">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

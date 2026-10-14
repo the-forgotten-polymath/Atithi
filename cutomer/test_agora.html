@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agora Test</title>
+    <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.22.0.js"></script>
+</head>
+<body>
+    <div id="log">Testing...</div>
+    <script>
+        const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+        async function testJoin() {
+            try {
+                const uid = await client.join("1932b7112f574a56a8cf07a4bae9d0f1", "test_channel", null, 1001);
+                document.getElementById("log").innerText = "SUCCESS: Joined channel with UID " + uid;
+                console.log("SUCCESS_JOIN", uid);
+            } catch (err) {
+                document.getElementById("log").innerText = "ERROR: " + err.code + " - " + err.message;
+                console.error("FAIL_JOIN", err);
+            }
+        }
+        testJoin();
+    </script>
+</body>
+</html>

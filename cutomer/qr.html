@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ATITHI &bull; In-Room QR AI Concierge</title>
+  <meta name="description" content="In-Room Multilingual QR Concierge for hotel guests. Instant requests, knowledge retrieval, and closed-loop operational dispatch.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Agora RTC Web SDK for Customer Voice Intercom -->
+  <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.22.0.js"></script>
+  <style>
+    :root {
+      --bg-main: #090d16;
+      --bg-card: rgba(18, 24, 38, 0.85);
+      --bg-card-subtle: rgba(255, 255, 255, 0.03);
+      --border-card: rgba(255, 255, 255, 0.08);
+      --border-gold: rgba(234, 179, 8, 0.35);
+      --gold-primary: #facc15;
+      --gold-gradient: linear-gradient(135deg, #facc15 0%, #ca8a04 100%);
+      --emerald: #10b981;
+      --blue: #3b82f6;
+      --amber: #f59e0b;
+      --rose: #ef4444;
+      --text-white: #ffffff;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --font-display: 'Cinzel', serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(234, 179, 8, 0.07) 0px, transparent 40%),
+        radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.06) 0px, transparent 40%);
+      color: var(--text-white);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0;
+    }
+
+    /* Mobile Container Frame */
+    .app-viewport {
+      width: 100%;
+      max-width: 500px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-main);
+      border-left: 1px solid var(--border-card);
+      border-right: 1px solid var(--border-card);
+      position: relative;
+    }
+
+    /* Header */
+    .app-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-card);
+      background: rgba(9, 13, 22, 0.9);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hotel-crest {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--gold-gradient);
+      color: #1e1b4b;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(234, 179, 8, 0.25);
+    }
+
+    .hotel-info h1 {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+    }
+
+    .hotel-info p {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .room-badge-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(234, 179, 8, 0.12);
+      border: 1px solid var(--border-gold);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold-primary);
+    }
+
+    /* Architectural Proof Banner */
+    .arch-banner {
+      background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, rgba(234, 179, 8, 0.08) 100%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 8px 16px;
+      font-size: 11px;
+      color: #93c5fd;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .arch-banner span.badge {
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #bfdbfe;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 10px;
+    }
+
+    /* Active Ticket Closed-Loop Card (Floating alert) */
+    .active-ticket-tracker {
+      display: none;
+      margin: 12px 16px 0;
+      background: rgba(16, 24, 38, 0.95);
+      border: 1px solid rgba(234, 179, 8, 0.35);
+      border-radius: 14px;
+      padding: 14px 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tracker-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .tracker-id {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--gold-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tracker-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .tracker-badge.open { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .tracker-badge.in_progress { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .tracker-badge.resolved { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .tracker-badge.closed { background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3); }
+
+    .tracker-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .tracker-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Proactive Guest Confirmation Prompt */
+    .closed-loop-box {
+      margin-top: 10px;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .closed-loop-box p {
+      font-size: 12px;
+      color: #d1fae5;
+    }
+
+    .btn-confirm-fixed {
+      background: #10b981;
+      color: #064e3b;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-confirm-fixed:hover {
+      background: #34d399;
+    }
+
+    /* Main Content Area */
+    .main-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Hero Greeting */
+    .hero-greeting {
+      text-align: center;
+      padding: 12px 8px 8px;
+    }
+
+    .atithi-badge-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-primary);
+      margin-bottom: 6px;
+    }
+
+    .hero-greeting h2 {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .hero-greeting p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* 4 Major Action Buttons (As requested by user) */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .action-card-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 16px;
+      padding: 16px 14px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .action-card-btn:hover, .action-card-btn:active {
+      background: rgba(26, 34, 52, 0.95);
+      border-color: rgba(234, 179, 8, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .card-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .c-icon-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+    .c-icon-gold { background: rgba(234, 179, 8, 0.15); color: #facc15; }
+    .c-icon-rose { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+    .c-icon-emerald { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+
+    .action-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+
+    .action-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    /* Interactive Drawer / Sheet for Quick Pickers */
+    .quick-sheet {
+      display: none;
+      background: rgba(13, 18, 29, 0.98);
+      border: 1px solid var(--border-gold);
+      border-radius: 16px;
+      padding: 16px;
+      margin-top: -4px;
+      animation: fadeIn 0.25s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .sheet-header h3 {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-close-sheet {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .items-chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .item-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .item-chip:hover, .item-chip:active {
+      background: rgba(234, 179, 8, 0.15);
+      border-color: var(--gold-primary);
+      color: #facc15;
+    }
+
+    /* Chat Stream Area */
+    .chat-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chat-bubble {
+      display: flex;
+      gap: 10px;
+      max-width: 90%;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .chat-bubble.bot {
+      align-self: flex-start;
+    }
+
+    .chat-bubble.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+
+    .bubble-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--gold-gradient);
+      color: #1e1b4b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .bubble-user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .bubble-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-size: 13px;
+      line-height: 1.45;
+      color: #e2e8f0;
+    }
+
+    .chat-bubble.user .bubble-content {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.4);
+      color: #fff;
+    }
+
+    .ticket-embedded-card {
+      margin-top: 8px;
+      background: rgba(234, 179, 8, 0.08);
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 11px;
+    }
+
+    .ticket-embedded-card strong {
+      color: var(--gold-primary);
+    }
+
+    /* Fixed Bottom Chat Input Bar */
+    .bottom-input-bar {
+      padding: 12px 16px 20px;
+      background: rgba(9, 13, 22, 0.95);
+      border-top: 1px solid var(--border-card);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      bottom: 0;
+      z-index: 40;
+    }
+
+    .input-form-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-card);
+      border-radius: 24px;
+      padding: 4px 6px 4px 16px;
+      transition: all 0.2s;
+    }
+
+    .input-form-wrap:focus-within {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 12px rgba(234, 179, 8, 0.2);
+    }
+
+    .chat-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 14px;
+      font-family: var(--font-body);
+      outline: none;
+    }
+
+    .chat-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .btn-send {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gold-gradient);
+      border: none;
+      color: #1e1b4b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .btn-send:hover {
+      transform: scale(1.05);
+    }
+
+    /* Quick suggestions pills */
+    .quick-chips-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: none;
+    }
+
+    .quick-chips-row::-webkit-scrollbar { display: none; }
+
+    .q-chip {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      padding: 4px 12px;
+      border-radius: 14px;
+      font-size: 11px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .q-chip:hover {
+      background: rgba(234, 179, 8, 0.1);
+      color: #facc15;
+      border-color: rgba(234, 179, 8, 0.3);
+    }
+
+    /* --- Mode Switcher (Chat vs Voice Intercom) --- */
+    .qr-mode-switcher {
+      display: flex;
+      gap: 6px;
+      background: rgba(15, 23, 42, 0.85);
+      padding: 5px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin: 10px 14px 4px 14px;
+    }
+
+    .qr-mode-tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .qr-mode-tab:hover {
+      color: #fff;
+    }
+
+    .qr-mode-tab.active {
+      background: rgba(234, 179, 8, 0.15);
+      border-color: rgba(234, 179, 8, 0.4);
+      color: #facc15;
+      box-shadow: 0 4px 16px rgba(234, 179, 8, 0.12);
+    }
+
+    /* --- Customer Voice Intercom Stage --- */
+    .voice-stage-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px 30px;
+      text-align: center;
+      animation: fadeInStage 0.3s ease;
+    }
+
+    @keyframes fadeInStage {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .orb-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px 0 20px;
+    }
+
+    .orb-wave {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .wave-1 { width: 130px; height: 130px; }
+    .wave-2 { width: 165px; height: 165px; }
+    .wave-3 { width: 200px; height: 200px; }
+
+    .orb-container.active .orb-wave {
+      animation: rippleWave 2.6s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .orb-container.active .wave-1 { animation-delay: 0s; }
+    .orb-container.active .wave-2 { animation-delay: 0.8s; }
+    .orb-container.active .wave-3 { animation-delay: 1.6s; }
+
+    @keyframes rippleWave {
+      0% { transform: scale(0.75); opacity: 0.8; }
+      50% { opacity: 0.35; }
+      100% { transform: scale(1.35); opacity: 0; }
+    }
+
+    .voice-orb {
+      position: relative;
+      z-index: 2;
+      width: 105px;
+      height: 105px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #1e293b 0%, #090d16 100%);
+      border: 2px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .voice-orb:hover {
+      transform: scale(1.05);
+      border-color: rgba(234, 179, 8, 0.5);
+    }
+
+    .voice-orb.connected {
+      background: radial-gradient(circle at 35% 30%, #065f46 0%, #022c22 100%);
+      border-color: #10b981;
+      box-shadow: 0 0 45px rgba(16, 185, 129, 0.45), inset 0 0 15px rgba(16, 185, 129, 0.4);
+      animation: floatOrb 3.5s ease-in-out infinite;
+    }
+
+    .voice-orb.speaking {
+      background: radial-gradient(circle at 35% 30%, #0284c7 0%, #075985 100%);
+      border-color: #38bdf8;
+      box-shadow: 0 0 50px rgba(56, 189, 248, 0.5), inset 0 0 20px rgba(56, 189, 248, 0.4);
+      transform: scale(1.1);
+    }
+
+    @keyframes floatOrb {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .orb-core {
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.3s;
+    }
+
+    .voice-orb.connected .orb-core {
+      color: #fff;
+    }
+
+    .voice-status-panel {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .call-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 14px;
+      border-radius: 20px;
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      transition: all 0.3s;
+    }
+
+    .call-badge.connecting {
+      background: rgba(234, 179, 8, 0.15);
+      border-color: rgba(234, 179, 8, 0.35);
+      color: #facc15;
+    }
+
+    .call-badge.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #64748b;
+      transition: background 0.3s;
+    }
+
+    .call-badge.connecting .status-dot {
+      background: #facc15;
+      animation: pulseDot 1.2s infinite;
+    }
+
+    .call-badge.active .status-dot {
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulseDot 1.5s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .call-timer {
+      font-size: 26px;
+      font-weight: 700;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+
+    .voice-hint-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      max-width: 320px;
+      line-height: 1.45;
+    }
+
+    /* Waveform Bars */
+    .waveform-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      height: 32px;
+      margin: 12px 0 24px;
+    }
+
+    .waveform-container .bar {
+      width: 4px;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.2);
+      transition: height 0.15s ease, background 0.2s ease;
+    }
+
+    .waveform-container.active .bar {
+      background: #38bdf8;
+      animation: wavePulse 0.9s infinite ease-in-out alternate;
+    }
+
+    .waveform-container.active .bar:nth-child(1) { animation-delay: 0.0s; height: 14px; }
+    .waveform-container.active .bar:nth-child(2) { animation-delay: 0.2s; height: 26px; }
+    .waveform-container.active .bar:nth-child(3) { animation-delay: 0.4s; height: 32px; }
+    .waveform-container.active .bar:nth-child(4) { animation-delay: 0.1s; height: 20px; }
+    .waveform-container.active .bar:nth-child(5) { animation-delay: 0.3s; height: 12px; }
+
+    @keyframes wavePulse {
+      0% { height: 6px; }
+      100% { height: 28px; }
+    }
+
+    /* Voice Controls Row */
+    .voice-controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      max-width: 340px;
+    }
+
+    .btn-voice-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      background: var(--gold-gradient);
+      border: none;
+      color: #1e1b4b;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(234, 179, 8, 0.25);
+      transition: all 0.2s;
+    }
+
+    .btn-voice-main:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(234, 179, 8, 0.35);
+    }
+
+    .btn-voice-main:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-voice-main.hangup {
+      background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-voice-aux {
+      width: 48px;
+      height: 48px;
+      border-radius: 13px;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-voice-aux:hover:not(:disabled) {
+      background: rgba(51, 65, 85, 0.9);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-voice-aux:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-voice-aux.active-muted {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #ef4444;
+    }
+
+    /* Voice Call Card in Grid */
+    .voice-call-card {
+      border: 1px solid rgba(234, 179, 8, 0.35);
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.08) 0%, rgba(18, 24, 38, 0.9) 100%);
+    }
+
+    .c-icon-intercom {
+      background: rgba(234, 179, 8, 0.15);
+      color: #facc15;
+    }
+
+    .badge-call-now {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      font-size: 9.5px;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-weight: 700;
+      margin-left: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-viewport">
+    
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="hotel-crest">&#9818;</div>
+        <div class="hotel-info">
+          <h1>ATITHI</h1>
+          <p>The Himalayan Vista &bull; Mussoorie</p>
+        </div>
+      </div>
+      <div class="room-badge-wrap">
+        <i data-lucide="door-open" style="width:14px;height:14px;"></i>
+        <span id="display-room-num">Room 204</span>
+      </div>
+    </header>
+
+    <!-- Clean Hotel Operations Banner (Zero Tech Jargon) -->
+    <div class="arch-banner">
+      <span>Connected Hotel Operations &bull; Voice &bull; QR &bull; Staff</span>
+      <span class="badge">&#9889; 24x7 Live Operations Active</span>
+    </div>
+
+    <!-- Mode Switcher: AI Concierge Chat vs Customer Voice Intercom -->
+    <div class="qr-mode-switcher">
+      <button type="button" class="qr-mode-tab active" id="tabModeChat">
+        <i data-lucide="message-square-text"></i>
+        <span>AI Concierge Chat</span>
+      </button>
+      <button type="button" class="qr-mode-tab" id="tabModeVoice">
+        <i data-lucide="phone-call"></i>
+        <span>Customer Voice Intercom</span>
+      </button>
+    </div>
+
+    <!-- Active Ticket Closed-Loop Tracker (Synced in Real-time) -->
+    <div class="active-ticket-tracker" id="activeTicketTracker">
+      <div class="tracker-header">
+        <span class="tracker-id"><i data-lucide="ticket"></i> <span id="tktNumDisplay">#TKT-204-0024</span></span>
+        <span class="tracker-badge open" id="tktStatusBadge">OPEN • DISPATCHED</span>
+      </div>
+      <div class="tracker-title" id="tktTitleDisplay">Extra Towels Requested</div>
+      <div class="tracker-meta">
+        <span>Dept: <strong id="tktDeptDisplay" style="color:#fff;">Housekeeping</strong></span>
+        <span id="tktEtaDisplay">SLA: 15 Mins</span>
+      </div>
+
+      <!-- Proactive Guest Confirmation Prompt (When Resolved) -->
+      <div class="closed-loop-box" id="closedLoopPrompt">
+        <p id="closedLoopMsg">Our team has delivered your request. Is everything satisfactory?</p>
+        <button class="btn-confirm-fixed" id="btnConfirmResolution">
+          <i data-lucide="check-circle-2"></i> Yes, Resolved & Satisfied!
+        </button>
+      </div>
+    </div>
+
+    <!-- Scrollable Body -->
+    <div class="main-scroll" id="mainScroll">
+      
+      <!-- CUSTOMER VOICE INTERCOM STAGE (Dedicated Hands-Free Call Mode) -->
+      <div class="voice-stage-container" id="voiceStage" style="display: none;">
+        <!-- Glowing Audio Visualizer Orb -->
+        <div class="orb-container" id="orbContainer">
+          <div class="orb-wave wave-3"></div>
+          <div class="orb-wave wave-2"></div>
+          <div class="orb-wave wave-1"></div>
+          <div class="voice-orb" id="voiceOrb" title="Tap to Call Concierge">
+            <div class="orb-core">
+              <i data-lucide="mic" id="orbMicIcon" style="width:36px;height:36px;"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status & Live Call Timer -->
+        <div class="voice-status-panel">
+          <div class="call-badge" id="callStatusBadge">
+            <span class="status-dot"></span>
+            <span id="callStatusText">Ready to Connect</span>
+          </div>
+          <div class="call-timer" id="callTimer">00:00</div>
+          <p class="voice-hint-text" id="callHintText">
+            Tap below to speak live hands-free with ATITHI Concierge in Hindi or English.
+          </p>
+        </div>
+
+        <!-- Audio Waveform -->
+        <div class="waveform-container" id="waveform">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
+
+        <!-- Voice Call Controls -->
+        <div class="voice-controls-row">
+          <button type="button" class="btn-voice-aux" id="btnVoiceMute" disabled title="Mute Microphone">
+            <i data-lucide="mic" id="iconVoiceMute"></i>
+          </button>
+          <button type="button" class="btn-voice-main" id="btnVoiceCall">
+            <i data-lucide="phone-call" id="iconVoiceCall"></i>
+            <span id="textVoiceCall">Call Front Desk</span>
+          </button>
+          <button type="button" class="btn-voice-aux" id="btnSwitchToChat" title="Switch to Chat">
+            <i data-lucide="message-square"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- CHAT STAGE CONTENT (Wrapper for switching) -->
+      <div id="chatStageContent">
+        <!-- Hero Greeting -->
+        <div class="hero-greeting">
+          <span class="atithi-badge-tag">In-Room AI Guest Concierge</span>
+          <h2>नमस्ते 👋<br>How can I help?</h2>
+          <p>No app download needed. Ask questions or request in-room services instantly.</p>
+        </div>
+
+        <!-- 5 Quick-Action Cards -->
+        <div class="actions-grid">
+          <!-- 0. Customer Voice Intercom Quick Card -->
+          <button class="action-card-btn voice-call-card" id="btn-action-intercom-call">
+            <div class="card-icon-box c-icon-intercom"><i data-lucide="phone-call"></i></div>
+            <div>
+              <div class="action-title">Customer Voice Intercom <span class="badge-call-now">&#9679; Live Call</span></div>
+              <div class="action-desc">Direct hands-free voice call with ATITHI Concierge</div>
+            </div>
+          </button>
+
+          <!-- 1. Ask a Question -->
+          <button class="action-card-btn" id="btn-action-ask">
+            <div class="card-icon-box c-icon-blue"><i data-lucide="message-circle-question"></i></div>
+            <div>
+              <div class="action-title">Ask a question</div>
+              <div class="action-desc">Timings, Wi-Fi, food menu & local spots</div>
+            </div>
+          </button>
+
+          <!-- 2. Request Service -->
+          <button class="action-card-btn" id="btn-action-service">
+            <div class="card-icon-box c-icon-gold"><i data-lucide="bell"></i></div>
+            <div>
+              <div class="action-title">Request service</div>
+              <div class="action-desc">Towels, water, blankets & housekeeping</div>
+            </div>
+          </button>
+
+          <!-- 3. Report a Problem -->
+          <button class="action-card-btn" id="btn-action-problem">
+            <div class="card-icon-box c-icon-rose"><i data-lucide="alert-triangle"></i></div>
+            <div>
+              <div class="action-title">Report a problem</div>
+              <div class="action-desc">Hot water, AC heating & plumbing repairs</div>
+            </div>
+          </button>
+
+          <!-- 4. Hotel Information -->
+          <button class="action-card-btn" id="btn-action-info">
+            <div class="card-icon-box c-icon-emerald"><i data-lucide="info"></i></div>
+            <div>
+              <div class="action-title">Hotel information</div>
+              <div class="action-desc">Breakfast, pool, gym & checkout policy</div>
+            </div>
+          </button>
+        </div>
+
+      <!-- Quick Interactive Picker Sheets -->
+      <!-- Service Picker -->
+      <div class="quick-sheet" id="sheet-service">
+        <div class="sheet-header">
+          <h3>Housekeeping & Amenities</h3>
+          <button class="btn-close-sheet" onclick="closeSheets()">&times;</button>
+        </div>
+        <div class="items-chip-list">
+          <button class="item-chip" onclick="sendQuickMessage('Mujhe do extra towels chahiye.')">🧺 Extra Towels</button>
+          <button class="item-chip" onclick="sendQuickMessage('Please send drinking water bottles to my room.')">💧 Drinking Water</button>
+          <button class="item-chip" onclick="sendQuickMessage('Need an extra warm blanket and pillows.')">🛏️ Extra Blanket</button>
+          <button class="item-chip" onclick="sendQuickMessage('Please arrange room cleaning and fresh linen.')">🧹 Room Cleaning</button>
+          <button class="item-chip" onclick="sendQuickMessage('Send dental and shaving kit.')">🪥 Dental & Shaving Kit</button>
+        </div>
+      </div>
+
+      <!-- Problem Picker -->
+      <div class="quick-sheet" id="sheet-problem">
+        <div class="sheet-header">
+          <h3 style="color:#f87171;">Report Room Defect</h3>
+          <button class="btn-close-sheet" onclick="closeSheets()">&times;</button>
+        </div>
+        <div class="items-chip-list">
+          <button class="item-chip" onclick="sendQuickMessage('Room 204 mein garam paani nahi aa raha.')">🚿 Hot Water Issue</button>
+          <button class="item-chip" onclick="sendQuickMessage('AC and room heater are not working properly.')">❄️ AC / Heater Issue</button>
+          <button class="item-chip" onclick="sendQuickMessage('Wi-Fi is disconnecting frequently in my room.')">📶 Wi-Fi Problem</button>
+          <button class="item-chip" onclick="sendQuickMessage('Bathroom tap is leaking.')">🚰 Water Leakage</button>
+        </div>
+      </div>
+
+      <!-- Hotel Info Picker -->
+      <div class="quick-sheet" id="sheet-info">
+        <div class="sheet-header">
+          <h3 style="color:#34d399;">Hotel Policies & Hours</h3>
+          <button class="btn-close-sheet" onclick="closeSheets()">&times;</button>
+        </div>
+        <div class="items-chip-list">
+          <button class="item-chip" onclick="sendQuickMessage('Breakfast kitne baje hai?')">🍳 Breakfast Timings</button>
+          <button class="item-chip" onclick="sendQuickMessage('What is the Wi-Fi network and password?')">📶 Wi-Fi Details</button>
+          <button class="item-chip" onclick="sendQuickMessage('Indoor heated swimming pool timings kya hain?')">🏊 Pool & Gym Hours</button>
+          <button class="item-chip" onclick="sendQuickMessage('Check out time kya hai?')">⏰ Check-out Time</button>
+        </div>
+      </div>
+
+      <!-- Chat Messages Container -->
+      <div class="chat-section" id="chatStream">
+        <!-- Initial Bot Welcome -->
+        <div class="chat-bubble bot">
+          <div class="bubble-avatar"><i data-lucide="sparkles" style="width:14px;height:14px;"></i></div>
+          <div class="bubble-content">
+            नमस्ते! I am ATITHI, your 24/7 in-room digital concierge. You can ask me questions in English or Hindi, or request any hotel service directly!
+          </div>
+        </div>
+      </div>
+
+      </div> <!-- /#chatStageContent -->
+
+    </div> <!-- /.main-scroll -->
+
+    <!-- Sticky Bottom Bar -->
+    <div class="bottom-input-bar" id="bottomInputBar">
+      <!-- Quick Suggestion Chips -->
+      <div class="quick-chips-row">
+        <div class="q-chip" onclick="sendQuickMessage('Breakfast kitne baje hai?')">🍳 Breakfast kitne baje hai?</div>
+        <div class="q-chip" onclick="sendQuickMessage('Mujhe do extra towels chahiye.')">🧺 Extra towels chahiye</div>
+        <div class="q-chip" onclick="sendQuickMessage('Wi-Fi password kya hai?')">📶 Wi-Fi password</div>
+        <div class="q-chip" onclick="sendQuickMessage('Garam paani nahi aa raha')">🚿 Garam paani</div>
+      </div>
+
+      <form id="chatForm" class="input-form-wrap" onsubmit="handleFormSubmit(event)">
+        <input type="text" id="chatInput" class="chat-input" placeholder="Type request or ask in Hindi/English..." autocomplete="off">
+        <button type="submit" class="btn-send" aria-label="Send Request">
+          <i data-lucide="arrow-up" style="width:18px;height:18px;"></i>
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    // Parse Room from URL (e.g. ?room=204)
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomNumber = urlParams.get('room') || '204';
+    document.getElementById('display-room-num').textContent = `Room ${roomNumber}`;
+
+    // DOM References
+    const chatStream = document.getElementById('chatStream');
+    const chatInput = document.getElementById('chatInput');
+    const mainScroll = document.getElementById('mainScroll');
+
+    const tracker = {
+      card: document.getElementById('activeTicketTracker'),
+      num: document.getElementById('tktNumDisplay'),
+      title: document.getElementById('tktTitleDisplay'),
+      dept: document.getElementById('tktDeptDisplay'),
+      badge: document.getElementById('tktStatusBadge'),
+      eta: document.getElementById('tktEtaDisplay'),
+      closedLoopPrompt: document.getElementById('closedLoopPrompt'),
+      closedLoopMsg: document.getElementById('closedLoopMsg'),
+      btnConfirm: document.getElementById('btnConfirmResolution')
+    };
+
+    let currentTicket = null;
+
+    // Sheet Toggles
+    const sheetService = document.getElementById('sheet-service');
+    const sheetProblem = document.getElementById('sheet-problem');
+    const sheetInfo = document.getElementById('sheet-info');
+
+    function closeSheets() {
+      sheetService.style.display = 'none';
+      sheetProblem.style.display = 'none';
+      sheetInfo.style.display = 'none';
+    }
+
+    document.getElementById('btn-action-ask').addEventListener('click', () => {
+      closeSheets();
+      chatInput.focus();
+    });
+
+    document.getElementById('btn-action-service').addEventListener('click', () => {
+      closeSheets();
+      sheetService.style.display = 'block';
+      sheetService.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    document.getElementById('btn-action-problem').addEventListener('click', () => {
+      closeSheets();
+      sheetProblem.style.display = 'block';
+      sheetProblem.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    document.getElementById('btn-action-info').addEventListener('click', () => {
+      closeSheets();
+      sheetInfo.style.display = 'block';
+      sheetInfo.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    function sendQuickMessage(text) {
+      closeSheets();
+      chatInput.value = text;
+      handleFormSubmit(new Event('submit'));
+    }
+
+    // Chat Submission
+    async function handleFormSubmit(e) {
+      if (e) e.preventDefault();
+      const query = chatInput.value.trim();
+      if (!query) return;
+
+      chatInput.value = '';
+
+      // 1. Render User Bubble
+      renderBubble(query, 'user');
+
+      // 2. Render Typing Indicator
+      const typingId = 'typing-' + Date.now();
+      renderTypingBubble(typingId);
+
+      try {
+        const resp = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: query,
+            room_number: roomNumber,
+            guest_name: 'Guest',
+            source_channel: 'qr_concierge'
+          })
+        });
+
+        const data = await resp.json();
+        removeTypingBubble(typingId);
+
+        // 3. Render Bot Reply
+        renderBubble(data.reply || "I have received your request.", 'bot', data.action_ticket);
+
+        // 4. If action ticket created, update live closed-loop tracker!
+        if (data.action_ticket) {
+          fetchRoomTickets();
+        }
+
+      } catch (err) {
+        removeTypingBubble(typingId);
+        renderBubble("Server connection offline. Please check your Wi-Fi or contact reception.", 'bot');
+      }
+    }
+
+    function renderBubble(text, sender, actionTicket = null) {
+      const bubble = document.createElement('div');
+      bubble.className = `chat-bubble ${sender}`;
+
+      let ticketHtml = '';
+      if (actionTicket) {
+        ticketHtml = `
+          <div class="ticket-embedded-card">
+            <strong>⚡ Ticket #${actionTicket.ticket_number || 'CREATED'}</strong> &bull; ${actionTicket.department || 'Operations'} (${actionTicket.priority || 'Normal'})<br>
+            <span style="color:#94a3b8;font-size:10px;">Logged via In-Room QR &bull; Staff Dispatched</span>
+          </div>
+        `;
+      }
+
+      if (sender === 'user') {
+        bubble.innerHTML = `
+          <div class="bubble-user-avatar"><i data-lucide="user" style="width:14px;height:14px;"></i></div>
+          <div class="bubble-content">${escapeHtml(text)}</div>
+        `;
+      } else {
+        bubble.innerHTML = `
+          <div class="bubble-avatar"><i data-lucide="sparkles" style="width:14px;height:14px;"></i></div>
+          <div class="bubble-content">
+            ${escapeHtml(text)}
+            ${ticketHtml}
+          </div>
+        `;
+      }
+
+      chatStream.appendChild(bubble);
+      lucide.createIcons();
+      mainScroll.scrollTop = mainScroll.scrollHeight;
+    }
+
+    function renderTypingBubble(id) {
+      const bubble = document.createElement('div');
+      bubble.className = 'chat-bubble bot';
+      bubble.id = id;
+      bubble.innerHTML = `
+        <div class="bubble-avatar"><i data-lucide="sparkles" style="width:14px;height:14px;"></i></div>
+        <div class="bubble-content" style="color:#94a3b8;font-style:italic;">
+          ATITHI is thinking...
+        </div>
+      `;
+      chatStream.appendChild(bubble);
+      lucide.createIcons();
+      mainScroll.scrollTop = mainScroll.scrollHeight;
+    }
+
+    function removeTypingBubble(id) {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+
+    // =========================================================================
+    // Mode Switching: AI Concierge Chat vs Customer Voice Intercom
+    // =========================================================================
+    const tabModeChat = document.getElementById('tabModeChat');
+    const tabModeVoice = document.getElementById('tabModeVoice');
+    const voiceStage = document.getElementById('voiceStage');
+    const chatStageContent = document.getElementById('chatStageContent');
+    const bottomInputBar = document.getElementById('bottomInputBar');
+
+    function switchQrMode(mode) {
+      if (mode === 'voice') {
+        tabModeChat.classList.remove('active');
+        tabModeVoice.classList.add('active');
+        chatStageContent.style.display = 'none';
+        bottomInputBar.style.display = 'none';
+        voiceStage.style.display = 'flex';
+        closeSheets();
+      } else {
+        tabModeVoice.classList.remove('active');
+        tabModeChat.classList.add('active');
+        voiceStage.style.display = 'none';
+        chatStageContent.style.display = 'block';
+        bottomInputBar.style.display = 'block';
+      }
+      lucide.createIcons();
+    }
+
+    tabModeChat.addEventListener('click', () => switchQrMode('chat'));
+    tabModeVoice.addEventListener('click', () => switchQrMode('voice'));
+    document.getElementById('btnSwitchToChat').addEventListener('click', () => switchQrMode('chat'));
+    document.getElementById('btn-action-intercom-call').addEventListener('click', () => {
+      switchQrMode('voice');
+      if (!voiceState.isCallActive && !voiceState.isConnecting) {
+        startQrCall();
+      }
+    });
+
+    // =========================================================================
+    // Customer Voice Intercom (Agora RTC Integration)
+    // =========================================================================
+    const voiceState = {
+      appId: "1932b7112f574a56a8cf07a4bae9d0f1",
+      pipelineId: "b8a99367a95c4cd2a8a4d5a9ebfbc849",
+      channelPrefix: "atithi_room",
+      isCallActive: false,
+      isConnecting: false,
+      isMuted: false,
+      callStartTime: null,
+      timerInterval: null,
+      client: null,
+      localAudioTrack: null,
+      remoteUsers: new Map(),
+      agentInstanceId: null,
+      currentChannel: null,
+      guestUid: Math.floor(1000 + Math.random() * 9000)
+    };
+
+    const voiceDom = {
+      orb: document.getElementById('voiceOrb'),
+      orbContainer: document.getElementById('orbContainer'),
+      orbMicIcon: document.getElementById('orbMicIcon'),
+      statusBadge: document.getElementById('callStatusBadge'),
+      statusText: document.getElementById('callStatusText'),
+      timer: document.getElementById('callTimer'),
+      hintText: document.getElementById('callHintText'),
+      waveform: document.getElementById('waveform'),
+      btnCall: document.getElementById('btnVoiceCall'),
+      iconCall: document.getElementById('iconVoiceCall'),
+      textCall: document.getElementById('textVoiceCall'),
+      btnMute: document.getElementById('btnVoiceMute'),
+      iconMute: document.getElementById('iconVoiceMute')
+    };
+
+    function setVoiceUIState(status) {
+      if (status === 'connecting') {
+        voiceState.isConnecting = true;
+        voiceDom.statusBadge.className = 'call-badge connecting';
+        voiceDom.statusText.innerText = 'Connecting with ATITHI Concierge...';
+        voiceDom.hintText.innerText = 'Establishing secure hands-free voice audio channel...';
+        voiceDom.orbContainer.classList.add('active');
+        voiceDom.btnCall.disabled = true;
+        voiceDom.btnMute.disabled = true;
+      } else if (status === 'connected') {
+        voiceState.isConnecting = false;
+        voiceState.isCallActive = true;
+        voiceDom.statusBadge.className = 'call-badge active';
+        voiceDom.statusText.innerText = 'Live • Speaking with ATITHI';
+        voiceDom.hintText.innerText = 'Speak naturally in Hindi or English (e.g. "Do extra towels chahiye" or "Garam paani nahi aa raha").';
+        voiceDom.orb.classList.add('connected');
+        voiceDom.orbContainer.classList.add('active');
+        voiceDom.waveform.classList.add('active');
+
+        // Button switches to End Call
+        voiceDom.btnCall.disabled = false;
+        voiceDom.btnCall.classList.add('hangup');
+        voiceDom.iconCall.setAttribute('data-lucide', 'phone-off');
+        voiceDom.textCall.innerText = 'End Voice Call';
+        voiceDom.btnMute.disabled = false;
+        lucide.createIcons();
+      } else if (status === 'idle') {
+        voiceState.isConnecting = false;
+        voiceState.isCallActive = false;
+        voiceDom.statusBadge.className = 'call-badge';
+        voiceDom.statusText.innerText = 'Ready to Connect';
+        voiceDom.hintText.innerText = 'Tap below to speak live hands-free with ATITHI Concierge in Hindi or English.';
+        voiceDom.orb.className = 'voice-orb';
+        voiceDom.orbContainer.classList.remove('active');
+        voiceDom.waveform.classList.remove('active');
+
+        // Button resets
+        voiceDom.btnCall.disabled = false;
+        voiceDom.btnCall.classList.remove('hangup');
+        voiceDom.iconCall.setAttribute('data-lucide', 'phone-call');
+        voiceDom.textCall.innerText = 'Call Concierge Desk';
+        voiceDom.btnMute.disabled = true;
+        voiceDom.btnMute.classList.remove('active-muted');
+        lucide.createIcons();
+      }
+    }
+
+    function startVoiceTimer() {
+      voiceState.callStartTime = Date.now();
+      voiceDom.timer.innerText = '00:00';
+      voiceState.timerInterval = setInterval(() => {
+        const elapsed = Math.floor((Date.now() - voiceState.callStartTime) / 1000);
+        const mins = String(Math.floor(elapsed / 60)).padStart(2, '0');
+        const secs = String(elapsed % 60).padStart(2, '0');
+        voiceDom.timer.innerText = `${mins}:${secs}`;
+      }, 1000);
+    }
+
+    function stopVoiceTimer() {
+      if (voiceState.timerInterval) {
+        clearInterval(voiceState.timerInterval);
+        voiceState.timerInterval = null;
+      }
+      voiceDom.timer.innerText = '00:00';
+    }
+
+    async function initAgoraEngine() {
+      if (voiceState.client) return;
+      if (typeof AgoraRTC === 'undefined') {
+        throw new Error("Agora SDK loading. Please ensure internet connectivity.");
+      }
+
+      voiceState.client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+
+      voiceState.client.on("user-published", async (user, mediaType) => {
+        await voiceState.client.subscribe(user, mediaType);
+        if (mediaType === "audio") {
+          user.audioTrack.play();
+          voiceState.remoteUsers.set(user.uid, user);
+        }
+      });
+
+      voiceState.client.on("user-unpublished", (user, mediaType) => {
+        if (mediaType === "audio") {
+          voiceState.remoteUsers.delete(user.uid);
+        }
+      });
+
+      voiceState.client.enableAudioVolumeIndicator();
+      voiceState.client.on("volume-indicator", (volumes) => {
+        if (!voiceState.isCallActive) return;
+        let maxVol = 0;
+        volumes.forEach(v => {
+          if (v.level > maxVol) maxVol = v.level;
+        });
+
+        if (maxVol > 12) {
+          voiceDom.waveform.classList.add('active');
+          voiceDom.orb.classList.add('speaking');
+        } else {
+          voiceDom.waveform.classList.remove('active');
+          voiceDom.orb.classList.remove('speaking');
+        }
+      });
+    }
+
+    async function startQrCall() {
+      if (voiceState.isConnecting || voiceState.isCallActive) return;
+
+      try {
+        setVoiceUIState('connecting');
+        await initAgoraEngine();
+
+        // 1. Channel & Token
+        const channelName = `${voiceState.channelPrefix}_${roomNumber}_${Date.now().toString().slice(-4)}`;
+        voiceState.currentChannel = channelName;
+
+        let token = null;
+        try {
+          const tokenRes = await fetch(`/api/token?channel=${channelName}&uid=${voiceState.guestUid}`);
+          if (tokenRes.ok) {
+            const tokenData = await tokenRes.json();
+            token = tokenData.token;
+          }
+        } catch (e) {
+          console.warn("Using public test token / standby token");
+        }
+
+        // 2. Microphone Track
+        voiceState.localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+
+        // 3. Join Agora Channel
+        await voiceState.client.join(voiceState.appId, channelName, token, voiceState.guestUid);
+        await voiceState.client.publish([voiceState.localAudioTrack]);
+
+        // 4. Start Cloud Voice Agent
+        try {
+          const agentRes = await fetch('/api/start-agent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              channel: channelName,
+              uid: String(voiceState.guestUid),
+              room_number: roomNumber,
+              pipeline_id: voiceState.pipelineId
+            })
+          });
+          if (agentRes.ok) {
+            const agentData = await agentRes.json();
+            voiceState.agentInstanceId = agentData.agent_id || agentData.instance_id;
+          }
+        } catch (agentErr) {
+          console.warn("Cloud agent auto-dispatch fallback:", agentErr);
+        }
+
+        startVoiceTimer();
+        setVoiceUIState('connected');
+
+      } catch (err) {
+        console.error("Call initialization failed:", err);
+        setVoiceUIState('idle');
+        alert("Microphone or audio call permission required. Please allow microphone access in your browser.");
+      }
+    }
+
+    async function endQrCall() {
+      stopVoiceTimer();
+      setVoiceUIState('idle');
+
+      // Stop cloud agent
+      if (voiceState.agentInstanceId) {
+        try {
+          await fetch('/api/stop-agent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ agent_id: voiceState.agentInstanceId })
+          });
+        } catch (e) {
+          console.warn("Could not stop agent:", e);
+        }
+        voiceState.agentInstanceId = null;
+      }
+
+      // Close microphone track
+      if (voiceState.localAudioTrack) {
+        voiceState.localAudioTrack.stop();
+        voiceState.localAudioTrack.close();
+        voiceState.localAudioTrack = null;
+      }
+
+      // Leave RTC Channel
+      if (voiceState.client) {
+        try {
+          await voiceState.client.leave();
+        } catch (e) {
+          console.warn("Error leaving channel:", e);
+        }
+      }
+
+      voiceState.remoteUsers.clear();
+      fetchRoomTickets();
+    }
+
+    function toggleQrMute() {
+      if (!voiceState.localAudioTrack) return;
+      voiceState.isMuted = !voiceState.isMuted;
+      voiceState.localAudioTrack.setMuted(voiceState.isMuted);
+
+      if (voiceState.isMuted) {
+        voiceDom.btnMute.classList.add('active-muted');
+        voiceDom.iconMute.setAttribute('data-lucide', 'mic-off');
+      } else {
+        voiceDom.btnMute.classList.remove('active-muted');
+        voiceDom.iconMute.setAttribute('data-lucide', 'mic');
+      }
+      lucide.createIcons();
+    }
+
+    voiceDom.btnCall.addEventListener('click', () => {
+      if (voiceState.isCallActive) {
+        endQrCall();
+      } else {
+        startQrCall();
+      }
+    });
+
+    voiceDom.orb.addEventListener('click', () => {
+      if (voiceState.isCallActive) {
+        endQrCall();
+      } else {
+        startQrCall();
+      }
+    });
+
+    voiceDom.btnMute.addEventListener('click', toggleQrMute);
+
+    // =========================================================================
+    // Active Ticket & Closed-Loop Sync
+    // =========================================================================
+    // Poll room tickets for real-time Closed Loop tracker
+    async function fetchRoomTickets() {
+      try {
+        const resp = await fetch(`/api/tickets?room_number=${roomNumber}`);
+        const data = await resp.json();
+        const tickets = data.tickets || [];
+        const activeTkt = tickets.find(t => ['open', 'in_progress', 'resolved'].includes(t.status)) || tickets[0];
+
+        if (activeTkt) {
+          currentTicket = activeTkt;
+          renderActiveTicket(activeTkt);
+        } else {
+          tracker.card.style.display = 'none';
+        }
+      } catch (e) {
+        console.warn('Error fetching room tickets:', e);
+      }
+    }
+
+    function renderActiveTicket(tkt) {
+      tracker.card.style.display = 'block';
+      tracker.num.textContent = `#${tkt.ticket_number}`;
+      tracker.title.textContent = tkt.title || 'In-Room Service Request';
+      tracker.dept.textContent = tkt.department_name || 'Operations';
+
+      const status = (tkt.status || 'open').toLowerCase();
+      tracker.badge.className = `tracker-badge ${status}`;
+      
+      if (status === 'open') {
+        tracker.badge.textContent = 'OPEN • DISPATCHED';
+        tracker.eta.textContent = 'SLA: 15 Mins';
+        tracker.closedLoopPrompt.style.display = 'none';
+      } else if (status === 'in_progress') {
+        tracker.badge.textContent = 'IN PROGRESS • ASSIGNED';
+        tracker.eta.textContent = tkt.assigned_to ? `Steward: ${tkt.assigned_to}` : 'Staff En Route';
+        tracker.closedLoopPrompt.style.display = 'none';
+      } else if (status === 'resolved') {
+        tracker.badge.textContent = 'RESOLVED • PENDING CONFIRMATION';
+        tracker.eta.textContent = 'Serviced by Staff';
+        // Proactive Confirmation Trigger!
+        tracker.closedLoopPrompt.style.display = 'flex';
+        tracker.closedLoopMsg.textContent = `Our team has serviced "${tkt.title}" for Room ${roomNumber}. Is everything working fine now?`;
+      } else if (status === 'closed') {
+        tracker.badge.textContent = 'CLOSED • VERIFIED';
+        tracker.eta.textContent = 'Completed & Satisfied';
+        tracker.closedLoopPrompt.style.display = 'none';
+      }
+      lucide.createIcons();
+    }
+
+    // Guest taps "Yes, Resolved!" -> Closes the loop
+    tracker.btnConfirm.addEventListener('click', async () => {
+      if (!currentTicket) return;
+      try {
+        const resp = await fetch(`/api/tickets/${currentTicket.ticket_number}/confirm`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ guest_satisfied: true, guest_feedback: 'Issue resolved through QR Concierge' })
+        });
+        if (resp.ok) {
+          currentTicket.status = 'closed';
+          renderActiveTicket(currentTicket);
+          renderBubble("🎉 Thank you for confirming! Your ticket is now closed. Enjoy your stay at The Himalayan Vista!", 'bot');
+        }
+      } catch (e) {
+        console.error('Error confirming ticket:', e);
+      }
+    });
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Initial load & 5s Polling
+    fetchRoomTickets();
+    setInterval(fetchRoomTickets, 4000);
+  </script>
+</body>
+</html>

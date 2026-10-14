@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Himalayan Vista &bull; Operations & Room Directory (Mussoorie)</title>
+  <meta name="description" content="Minimalist, ergonomic luxury hotel directory with live room tracking, door simulation, smart controls, and operations management.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Top Header Navigation -->
+  <header class="hotel-header" id="hotel-header">
+    <div class="header-branding">
+      <div class="crest-icon">&#9818;</div>
+      <div class="branding-text">
+        <h1 class="hotel-title" id="hotel-title">The Himalayan Vista</h1>
+        <p class="hotel-subtitle" id="hotel-subtitle">Mussoorie, Uttarakhand &bull; 40 Rooms Live Operations</p>
+      </div>
+    </div>
+
+    <!-- Live Search Bar -->
+    <div class="header-search-wrap">
+      <span class="search-icon">&#128269;</span>
+      <input type="text" id="input-room-search" class="search-input" placeholder="Search room # or guest name..." aria-label="Search rooms or guests">
+      <button type="button" id="btn-clear-search" class="btn-clear-search" hidden>&times;</button>
+    </div>
+
+    <!-- Executive Quick Stats Bar -->
+    <div class="header-stats" id="header-stats">
+      <div class="stat-item">
+        <span class="stat-label">Floors</span>
+        <span class="stat-value" id="stat-floors-count">2</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-label">Total Rooms</span>
+        <span class="stat-value" id="stat-rooms-count">8</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-label">Occupancy</span>
+        <span class="stat-value" id="stat-occupancy-rate">50%</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-label">Est. Revenue</span>
+        <span class="stat-value" id="stat-revenue">&#8377;24,000</span>
+      </div>
+    </div>
+
+    <!-- Top Right Actions -->
+    <div class="header-actions">
+      <button id="btn-sound-toggle" class="btn-icon" title="Toggle Sound Effects" aria-label="Toggle Sound Effects">
+        <span class="icon" id="sound-icon">&#128266;</span>
+      </button>
+      <button id="btn-open-concierge" class="btn-concierge-header" title="Test Phase 2 ATITHI AI Concierge" aria-label="Open AI Concierge">
+        <span class="concierge-icon">&#10024;</span>
+        <span class="concierge-text">AI Brain (Phase 2)</span>
+      </button>
+      <button id="btn-open-tickets" class="btn-tickets-header" title="Live Operational Tickets & Loop Closer" aria-label="Open Operational Tickets">
+        <span class="ticket-pulse-dot" id="header-ticket-dot"></span>
+        <span class="ticket-btn-icon">&#128221;</span>
+        <span class="ticket-btn-text">Tickets (<span id="header-ticket-count">0</span>)</span>
+      </button>
+      <a href="owner.html" id="btn-open-owner" class="btn-owner-header" title="Phase 7: Owner Executive Intelligence" aria-label="Open Owner Dashboard">
+        <span class="owner-icon">&#128081;</span>
+        <span class="owner-text">Owner Brief</span>
+      </a>
+      <button id="btn-open-qr-stand" class="btn-qr-header" title="Phase 8: In-Room Multilingual QR Stand" aria-label="Open Room QR Stand">
+        <span class="qr-btn-icon">&#128241;</span>
+        <span class="qr-btn-text">In-Room QR</span>
+      </button>
+      <button id="btn-open-incidents" class="btn-incidents-header" title="Phase 9: ATITHI Operational Intelligence & Incident Detection" aria-label="Open Operational Incidents">
+        <span class="incident-pulse-dot" id="header-incident-dot"></span>
+        <span class="incident-btn-icon">&#128680;</span>
+        <span class="incident-btn-text">Incident (<span id="header-incident-count">0</span>)</span>
+      </button>
+      <button id="btn-open-demo-guide" class="btn-demo-header" title="Phase 12: End-to-End Presentation Demo Guide" aria-label="Open End-to-End Demo Guide">
+        <span class="demo-icon">&#127916;</span>
+        <span class="demo-text">Demo Guide</span>
+      </button>
+      <button id="btn-header-export-excel" class="btn-export-header" title="Export Hotel Directory to Excel / Sheets (.CSV)" aria-label="Export Hotel Directory to Excel">
+        <span class="export-icon">&#128202;</span>
+        <span class="export-text">Export</span>
+      </button>
+      <button id="btn-open-settings" class="btn-settings" aria-label="Open Hotel Settings">
+        <span class="settings-icon">&#9881;</span>
+        <span class="settings-text">Settings</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Clean Minimalist Filter Strip -->
+  <nav class="filter-strip" aria-label="Room filters">
+    <div class="filter-strip-inner">
+      <div class="filter-buttons">
+        <button type="button" class="filter-btn active" data-filter="all">All (<span id="count-all">8</span>)</button>
+        <button type="button" class="filter-btn" data-filter="available"><span class="filter-dot available"></span> Available (<span id="count-available">4</span>)</button>
+        <button type="button" class="filter-btn" data-filter="occupied"><span class="filter-dot occupied"></span> Occupied (<span id="count-occupied">3</span>)</button>
+        <button type="button" class="filter-btn" data-filter="cleaning"><span class="filter-dot cleaning"></span> Cleaning (<span id="count-cleaning">1</span>)</button>
+        <button type="button" class="filter-btn" data-filter="dnd"><span class="filter-tag-icon">&#128722;</span> DND (<span id="count-dnd">1</span>)</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ATITHI Phase 9: Operational Intelligence & Shared-System Incident Alert Banner -->
+  <section class="incident-alert-banner" id="incident-alert-banner" style="display:none;" aria-live="assertive">
+    <div class="incident-banner-inner">
+      <div class="incident-banner-left">
+        <div class="incident-badge-row">
+          <span class="incident-live-pulse"><span class="incident-pulse-ring"></span>&#128680; ATITHI OPERATIONAL INTELLIGENCE</span>
+          <span class="incident-tag-severity">CRITICAL ANOMALY</span>
+          <span class="incident-tag-subsystem" id="banner-subsystem-tag">Central Heating System</span>
+        </div>
+        <h3 class="incident-banner-title" id="banner-incident-title">PATTERN DETECTED &bull; Potential Shared-System Incident</h3>
+        <p class="incident-banner-msg" id="banner-incident-msg">
+          &ldquo;Three rooms reported hot-water issues within 17 minutes. Please investigate the central heating system.&rdquo;
+        </p>
+        <div class="incident-banner-meta">
+          <span class="meta-item"><strong>Rooms Affected:</strong> <span id="banner-rooms-affected" class="rooms-badge-list"><span class="room-pill">Room 204</span><span class="room-pill">Room 307</span><span class="room-pill">Room 412</span></span></span>
+          <span class="meta-item"><strong>Cluster Window:</strong> <span id="banner-cluster-time" style="color:var(--gold-primary);font-weight:700;">17 minutes</span></span>
+        </div>
+        <div class="incident-ai-safety-notice">
+          <span class="safety-icon">&#128737;&#65039;</span>
+          <div class="safety-text">
+            <strong>AI Safety Protocol:</strong> ATITHI does <em>NOT</em> claim the boiler is broken. It detects a shared-system anomaly &mdash; <strong>human verification required</strong>.
+          </div>
+        </div>
+      </div>
+      <div class="incident-banner-right">
+        <div class="incident-status-indicator" id="banner-status-indicator">
+          <span class="status-badge active" id="banner-status-badge">Awaiting Human Verification</span>
+        </div>
+        <div class="incident-banner-actions">
+          <button type="button" id="btn-banner-dispatch" class="btn-incident-dispatch" title="Dispatch Chief Engineer for Physical Inspection">
+            <span>&#128295;</span> Dispatch Chief Engineer
+          </button>
+          <button type="button" id="btn-banner-view" class="btn-incident-view" title="View Full Incident Telemetry & Correlated Tickets">
+            <span>&#128221;</span> View Tickets (<span id="banner-tkt-count">3</span>)
+          </button>
+          <button type="button" id="btn-banner-simulate" class="btn-incident-sim" title="Simulate 3-Room PPT Hot Water Anomaly">
+            <span>&#9889;</span> Simulate PPT Scenario
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Corridor / Hotel View -->
+  <main class="hotel-container" id="hotel-container">
+    <!-- Container where floors and doors are dynamically rendered -->
+    <div class="floors-wrapper" id="floors-wrapper">
+      <!-- Dynamically generated by app.js -->
+    </div>
+  </main>
+
+  <!-- Settings Modal Dialog -->
+  <div class="modal-backdrop" id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title" hidden>
+    <div class="modal-card modal-card-wide">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-badge">&#9881; Management &amp; Configuration</span>
+          <h2 id="settings-title" class="modal-title">Hotel &amp; Operations Settings</h2>
+        </div>
+        <button id="btn-close-settings" class="modal-close" aria-label="Close settings">&times;</button>
+      </div>
+
+      <!-- Settings Sub-Navigation Tabs -->
+      <div class="settings-tabs-bar" role="tablist">
+        <button type="button" class="settings-tab-btn active" data-tab="tab-floors" role="tab" aria-selected="true">&#127959; Floors &amp; Rooms</button>
+        <button type="button" class="settings-tab-btn" data-tab="tab-identity" role="tab" aria-selected="false">&#127976; Hotel Profile</button>
+        <button type="button" class="settings-tab-btn" data-tab="tab-dining" role="tab" aria-selected="false">&#127860; Dining &amp; Amenities</button>
+        <button type="button" class="settings-tab-btn" data-tab="tab-policies" role="tab" aria-selected="false">&#128220; Policies &amp; Rates</button>
+        <button type="button" class="settings-tab-btn" data-tab="tab-staff" role="tab" aria-selected="false">&#128101; Floor Stewards</button>
+        <button type="button" class="settings-tab-btn" data-tab="tab-export" role="tab" aria-selected="false">&#128202; Excel &amp; Google Sheets</button>
+      </div>
+
+      <div class="modal-body settings-tab-content">
+        <!-- TAB 1: Floors & Layout -->
+        <div class="settings-tab-pane active" id="tab-floors" role="tabpanel">
+          <div class="form-group">
+            <div class="label-with-hint">
+              <label for="input-floors-count" class="field-label">Number of Floors</label>
+              <span class="field-hint">Hotel floor levels (1 &ndash; 15)</span>
+            </div>
+            <div class="stepper-input">
+              <button type="button" class="stepper-btn" id="btn-decrease-floors" aria-label="Decrease floors">&minus;</button>
+              <input type="number" id="input-floors-count" min="1" max="15" value="2" class="num-input">
+              <button type="button" class="stepper-btn" id="btn-increase-floors" aria-label="Increase floors">&plus;</button>
+            </div>
+          </div>
+
+          <div class="quick-preset-panel">
+            <div class="panel-header">
+              <span class="panel-title">Quick Uniform Setup</span>
+              <span class="panel-subtitle">Set uniform room count across all floors</span>
+            </div>
+            <div class="quick-apply-row">
+              <div class="stepper-input compact">
+                <button type="button" class="stepper-btn" id="btn-decrease-quick" aria-label="Decrease quick rooms">&minus;</button>
+                <input type="number" id="input-quick-rooms" min="1" max="15" value="4" class="num-input">
+                <button type="button" class="stepper-btn" id="btn-increase-quick" aria-label="Increase quick rooms">&plus;</button>
+              </div>
+              <button type="button" id="btn-apply-uniform" class="btn-secondary">
+                Apply to All Floors
+              </button>
+            </div>
+          </div>
+
+          <div class="per-floor-section">
+            <div class="section-title-row">
+              <h3 class="section-title">Rooms per Floor</h3>
+              <span class="section-note">Customize specific floors</span>
+            </div>
+            <div class="floors-config-list" id="floors-config-list">
+              <!-- Dynamically populated list -->
+            </div>
+          </div>
+
+          <div class="presets-section">
+            <span class="presets-label">Layout Presets:</span>
+            <div class="presets-buttons">
+              <button type="button" class="btn-chip" data-preset="2-4">2 Floors &times; 4 Rooms (Default)</button>
+              <button type="button" class="btn-chip" data-preset="3-5">3 Floors &times; 5 Rooms</button>
+              <button type="button" class="btn-chip" data-preset="4-3">4 Floors &times; 3 Rooms</button>
+              <button type="button" class="btn-chip" data-preset="4-10">4 Floors &times; 10 Rooms (40-Room Property)</button>
+              <button type="button" class="btn-chip" data-preset="custom-grand">Grand Tier (2, 4, 6, 8)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: Hotel Profile & Identity -->
+        <div class="settings-tab-pane" id="tab-identity" role="tabpanel" hidden>
+          <div class="form-grid-two">
+            <div class="form-field">
+              <label for="input-hotel-name" class="field-label">Hotel Name</label>
+              <input type="text" id="input-hotel-name" class="settings-input" placeholder="e.g. The Grand Imperial Hotel">
+            </div>
+            <div class="form-field">
+              <label for="input-hotel-tagline" class="field-label">Subtitle / Sub-branding</label>
+              <input type="text" id="input-hotel-tagline" class="settings-input" placeholder="e.g. Live Operations Directory">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="input-hotel-address" class="field-label">Address &amp; Location</label>
+            <input type="text" id="input-hotel-address" class="settings-input" placeholder="e.g. Library End, Camel's Back Road, Mussoorie, Uttarakhand">
+          </div>
+
+          <div class="form-grid-three">
+            <div class="form-field">
+              <label for="input-hotel-phone" class="field-label">Contact Phone</label>
+              <input type="text" id="input-hotel-phone" class="settings-input" placeholder="+91 135 263 5890">
+            </div>
+            <div class="form-field">
+              <label for="input-hotel-email" class="field-label">Email</label>
+              <input type="email" id="input-hotel-email" class="settings-input" placeholder="concierge@hotel.com">
+            </div>
+            <div class="form-field">
+              <label for="input-hotel-currency" class="field-label">Currency Symbol</label>
+              <input type="text" id="input-hotel-currency" class="settings-input" placeholder="₹" maxlength="5">
+            </div>
+          </div>
+
+          <div class="form-grid-two">
+            <div class="form-field">
+              <label for="input-hotel-checkin" class="field-label">Check-In Time</label>
+              <input type="text" id="input-hotel-checkin" class="settings-input" placeholder="2:00 PM">
+            </div>
+            <div class="form-field">
+              <label for="input-hotel-checkout" class="field-label">Check-Out Time</label>
+              <input type="text" id="input-hotel-checkout" class="settings-input" placeholder="11:00 AM">
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: Dining & Amenities Knowledge -->
+        <div class="settings-tab-pane" id="tab-dining" role="tabpanel" hidden>
+          <div class="form-grid-two">
+            <div class="form-field">
+              <label for="input-breakfast-timings" class="field-label">Breakfast Timings</label>
+              <input type="text" id="input-breakfast-timings" class="settings-input" placeholder="7:30 AM &ndash; 10:30 AM">
+            </div>
+            <div class="form-field">
+              <label for="input-breakfast-venue" class="field-label">Breakfast Venue</label>
+              <input type="text" id="input-breakfast-venue" class="settings-input" placeholder="Pine &amp; Mist Restaurant">
+            </div>
+          </div>
+
+          <div class="form-grid-two">
+            <div class="form-field">
+              <label for="input-wifi-ssid" class="field-label">Guest Wi-Fi (SSID)</label>
+              <input type="text" id="input-wifi-ssid" class="settings-input" placeholder="GrandImperial_Guest">
+            </div>
+            <div class="form-field">
+              <label for="input-wifi-password" class="field-label">Wi-Fi Password / Access</label>
+              <input type="text" id="input-wifi-password" class="settings-input" placeholder="Room # + Guest Last Name">
+            </div>
+          </div>
+
+          <div class="form-grid-three">
+            <div class="form-field">
+              <label for="input-pool-timings" class="field-label">Pool Timings</label>
+              <input type="text" id="input-pool-timings" class="settings-input" placeholder="7:00 AM &ndash; 8:00 PM">
+            </div>
+            <div class="form-field">
+              <label for="input-gym-timings" class="field-label">Gym Hours</label>
+              <input type="text" id="input-gym-timings" class="settings-input" placeholder="24 Hours">
+            </div>
+            <div class="form-field">
+              <label for="input-room-service-hours" class="field-label">Room Service Hours</label>
+              <input type="text" id="input-room-service-hours" class="settings-input" placeholder="24x7">
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: Policies & Rates -->
+        <div class="settings-tab-pane" id="tab-policies" role="tabpanel" hidden>
+          <div class="form-field">
+            <label for="input-cancellation-policy" class="field-label">Cancellation Policy</label>
+            <input type="text" id="input-cancellation-policy" class="settings-input" placeholder="100% refund up to 48 hours prior to check-in">
+          </div>
+
+          <div class="form-grid-two">
+            <div class="form-field">
+              <label for="input-smoking-penalty" class="field-label">Smoking Deep Cleaning Fine</label>
+              <input type="text" id="input-smoking-penalty" class="settings-input" placeholder="₹5,000">
+            </div>
+            <div class="form-field">
+              <label for="input-extra-bed-fee" class="field-label">Rollaway Bed Charge</label>
+              <input type="text" id="input-extra-bed-fee" class="settings-input" placeholder="₹1,500 / night">
+            </div>
+          </div>
+
+          <div class="form-grid-two">
+            <div class="form-field">
+              <label for="input-visitor-policy" class="field-label">Visitor Policy</label>
+              <input type="text" id="input-visitor-policy" class="settings-input" placeholder="Permitted in public areas until 8:00 PM">
+            </div>
+            <div class="form-field">
+              <label for="input-pet-policy" class="field-label">Pet Policy</label>
+              <input type="text" id="input-pet-policy" class="settings-input" placeholder="Strictly not permitted">
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 5: Floor Stewards & Staff -->
+        <div class="settings-tab-pane" id="tab-staff" role="tabpanel" hidden>
+          <div class="form-field">
+            <div class="label-with-hint">
+              <label for="input-hotel-stewards" class="field-label">Assigned Floor Stewards</label>
+              <span class="field-hint">One steward per line. Auto-assigned across floors in rotation.</span>
+            </div>
+            <textarea id="input-hotel-stewards" class="settings-textarea" rows="5" placeholder="Ramesh Kumar (Lead Steward)&#10;Sunita Devi (Floor Supervisor)&#10;Amit Verma (Senior Housekeeper)&#10;Pooja Nair (Concierge Steward)"></textarea>
+          </div>
+        </div>
+
+        <!-- TAB 6: Export & Excel / Google Sheets Ledger -->
+        <div class="settings-tab-pane" id="tab-export" role="tabpanel" hidden>
+          <div class="export-cards-stack">
+            <!-- Card 1: Standard File & Clipboard Export -->
+            <div class="export-panel-card">
+              <div class="export-header-row">
+                <div class="export-icon-wrap">&#128202;</div>
+                <div class="export-meta">
+                  <h3 class="export-title">Export Property Directory (Excel &amp; Google Sheets)</h3>
+                  <p class="export-desc">Download an organized spreadsheet (.CSV) or copy formatted cells to clipboard for instant 1-click paste into Google Sheets.</p>
+                </div>
+              </div>
+
+              <div class="export-stats-preview">
+                <div class="export-stat-box">
+                  <span class="export-stat-label">Total Rooms</span>
+                  <span class="export-stat-val" id="export-total-rooms">8 Rooms</span>
+                </div>
+                <div class="export-stat-box">
+                  <span class="export-stat-label">Current Occupancy</span>
+                  <span class="export-stat-val" id="export-occupancy-rate">50%</span>
+                </div>
+                <div class="export-stat-box">
+                  <span class="export-stat-label">Total Floors</span>
+                  <span class="export-stat-val" id="export-floors-count">2 Floors</span>
+                </div>
+                <div class="export-stat-box">
+                  <span class="export-stat-label">Compatibility</span>
+                  <span class="export-stat-val">Excel &bull; Sheets (.CSV)</span>
+                </div>
+              </div>
+
+              <div class="export-actions-grid">
+                <button type="button" id="btn-export-all-excel" class="btn-export-primary" title="Download Excel-compatible .CSV file">
+                  <span class="export-btn-icon">&#128229;</span>
+                  <span>Download Excel / CSV Ledger</span>
+                </button>
+                <button type="button" id="btn-copy-google-sheets" class="btn-export-secondary" title="Copy tab-separated data to paste directly in Google Sheets">
+                  <span class="export-btn-icon">&#128203;</span>
+                  <span>Copy for Google Sheets (Instant Paste)</span>
+                </button>
+                <a href="https://sheets.new" target="_blank" rel="noopener noreferrer" class="btn-export-ghost" title="Open a new blank Google Sheet">
+                  <span class="export-btn-icon">&#128279;</span>
+                  <span>Open Blank Sheet (sheets.new)</span>
+                </a>
+              </div>
+
+              <div class="export-tip-box">
+                <span class="export-tip-icon">&#128161;</span>
+                <span class="export-tip-text"><strong>Instant Google Sheets Workflow:</strong> Click <em>"Copy for Google Sheets"</em>, open your sheet, and press <strong>Ctrl+V</strong> (or <strong>Cmd+V</strong>). Every room, floor, status, tariff, and guest roster pastes neatly into cells without file uploads.</span>
+              </div>
+            </div>
+
+            <!-- Card 2: Real-time Live Google Sheets Sync (Webhook) -->
+            <div class="export-panel-card sync-panel-card">
+              <div class="export-header-row">
+                <div class="export-icon-wrap sync-icon">&#9889;</div>
+                <div class="export-meta">
+                  <h3 class="export-title">Automated Live Sync to Google Sheets</h3>
+                  <p class="export-desc">Connect directly to an active Google Sheet via Google Apps Script Webhook. Stream real-time room updates automatically.</p>
+                </div>
+              </div>
+
+              <div class="unified-field">
+                <label for="google-sheets-webhook" class="unified-label">Google Apps Script Web App URL</label>
+                <input type="url" id="google-sheets-webhook" class="unified-control" placeholder="https://script.google.com/macros/s/AKfycb.../exec" spellcheck="false">
+              </div>
+
+              <div class="sync-actions-row">
+                <button type="button" id="btn-sync-google-sheets" class="btn-sync-sheets">
+                  <span class="export-btn-icon">&#9889;</span>
+                  <span>Sync Live to Google Sheets Now</span>
+                </button>
+                <button type="button" id="btn-toggle-sheets-guide" class="btn-help-sheets">
+                  <span>View 30-Sec Setup Script</span>
+                </button>
+              </div>
+
+              <!-- Expandable Apps Script Guide -->
+              <div class="sync-guide-box" id="sheets-guide-box" hidden>
+                <h4 class="guide-title">How to connect in 30 seconds:</h4>
+                <ol class="guide-steps">
+                  <li>Open your Google Sheet and click <strong>Extensions &gt; Apps Script</strong>.</li>
+                  <li>Paste the script below and click <strong>Save</strong>:</li>
+                </ol>
+                <div class="code-snippet-box">
+                  <code>function doPost(e) {
+  var data = JSON.parse(e.postData.contents);
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  sheet.clear();
+  sheet.getRange(1, 1, data.rooms.length, data.rooms[0].length).setValues(data.rooms);
+  return ContentService.createTextOutput("OK");
+}</code>
+                </div>
+                <ol class="guide-steps" start="3">
+                  <li>Click <strong>Deploy &gt; New deployment</strong> &rarr; Select <strong>Web app</strong>.</li>
+                  <li>Set <em>"Who has access"</em> to <strong>Anyone</strong> and click <strong>Deploy</strong>.</li>
+                  <li>Copy the resulting Web App URL and paste it into the field above!</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="btn-reset-default" class="btn-ghost">Reset Default</button>
+        <div class="modal-footer-actions">
+          <button type="button" id="btn-settings-export-excel" class="btn-secondary">&#128202; Export Excel / Sheets</button>
+          <button type="button" id="btn-cancel-settings" class="btn-outline">Cancel</button>
+          <button type="button" id="btn-save-settings" class="btn-primary">Save Settings</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comprehensive Room Detail Modal / Door Click Interaction -->
+  <div class="modal-backdrop" id="room-modal" role="dialog" aria-modal="true" aria-labelledby="room-modal-title" hidden>
+    <div class="modal-card room-card-modal-large">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="room-modal-badges">
+            <span class="modal-badge" id="room-modal-level-badge">Floor 1</span>
+            <span class="modal-badge-tier" id="room-modal-tier-badge">Royal Suite</span>
+          </div>
+          <h2 id="room-modal-title" class="modal-title">Room 103</h2>
+        </div>
+        <button id="btn-close-room-modal" class="modal-close" aria-label="Close room details">&times;</button>
+      </div>
+
+      <div class="modal-body room-modal-grid">
+        <!-- Left Column: Mini Door & Quick Status -->
+        <div class="room-modal-left">
+          <div class="room-door-mini-wrap">
+            <div class="room-door-mini" id="modal-door-preview">
+              <img src="Door.png" alt="Hotel Room Door" class="mini-door-img">
+              <div class="mini-door-plaque" id="mini-room-number">103</div>
+              <div class="mini-door-hanger" id="mini-door-hanger" hidden>DND</div>
+              <div class="mini-door-light" id="mini-door-light"></div>
+            </div>
+
+            <!-- Editable Nightly Price -->
+            <div class="price-edit-wrap">
+              <label for="room-edit-price" class="price-edit-label">Tariff / Night</label>
+              <div class="price-input-row">
+                <span class="currency-prefix" id="room-currency-symbol">&#8377;</span>
+                <input type="number" id="room-edit-price" class="room-price-input" min="500" step="100" value="4500">
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="room-quick-actions">
+            <button type="button" id="btn-knock-door" class="btn-action">
+              <span>Knock</span>
+            </button>
+            <button type="button" id="btn-toggle-status" class="btn-action">
+              <span id="btn-toggle-status-text">Check In</span>
+            </button>
+            <button type="button" id="btn-toggle-dnd" class="btn-action">
+              <span id="btn-toggle-dnd-text">DND: Off</span>
+            </button>
+            <button type="button" id="btn-toggle-cleaning" class="btn-action">
+              <span>Clean</span>
+            </button>
+          </div>
+
+          <!-- Primary Save Button for this room -->
+          <button type="button" id="btn-save-room-details" class="btn-primary btn-save-room">
+            Save Details
+          </button>
+        </div>
+
+        <!-- Right Column: Minimalist Editable Sections -->
+        <div class="room-modal-right">
+          <!-- Section 1: Guest Information (Standardized Form Grid) -->
+          <div class="detail-box">
+            <div class="detail-box-header">
+              <span class="detail-box-title">Guest &amp; Reservation</span>
+              <div class="status-select-wrap">
+                <label for="room-edit-status" class="status-select-label">Status</label>
+                <select id="room-edit-status" class="unified-control unified-status-select">
+                  <option value="available">Available</option>
+                  <option value="occupied">Occupied</option>
+                  <option value="cleaning">Housekeeping</option>
+                  <option value="maintenance">Maintenance</option>
+                </select>
+              </div>
+            </div>
+            <div class="unified-form-grid">
+              <div class="unified-field">
+                <label for="room-edit-guest-name" class="unified-label">Guest Name</label>
+                <input type="text" id="room-edit-guest-name" class="unified-control" placeholder="Guest Name">
+              </div>
+              <div class="unified-field">
+                <label for="room-edit-vip" class="unified-label">VIP / Loyalty Tier</label>
+                <select id="room-edit-vip" class="unified-control">
+                  <option value="Standard Guest">Standard Guest</option>
+                  <option value="Gold Member">Gold Member</option>
+                  <option value="Taj Club VIP">Taj Club VIP</option>
+                  <option value="Platinum Elite">Platinum Elite</option>
+                  <option value="Corporate Executive">Corporate Executive</option>
+                </select>
+              </div>
+              <div class="unified-field">
+                <label for="room-edit-dates" class="unified-label">Stay Period</label>
+                <select id="room-edit-dates" class="unified-control">
+                  <option value="Available Immediately">Available Immediately</option>
+                  <option value="Oct 13 &ndash; Oct 17 (4 Nights)">Oct 13 &ndash; Oct 17 (4 Nights)</option>
+                  <option value="Oct 14 &ndash; Oct 18 (4 Nights)">Oct 14 &ndash; Oct 18 (4 Nights)</option>
+                  <option value="Oct 15 &ndash; Oct 20 (5 Nights)">Oct 15 &ndash; Oct 20 (5 Nights)</option>
+                  <option value="Weekend Stay (Fri &ndash; Sun)">Weekend Stay (Fri &ndash; Sun)</option>
+                  <option value="Weekly Stay (7 Nights)">Weekly Stay (7 Nights)</option>
+                  <option value="Long Term (14 Nights)">Long Term (14 Nights)</option>
+                  <option value="Walk-In (1 Night)">Walk-In (1 Night)</option>
+                </select>
+              </div>
+              <div class="unified-field">
+                <label for="room-edit-capacity" class="unified-label">Occupancy</label>
+                <select id="room-edit-capacity" class="unified-control">
+                  <option value="2 Adults &bull; Non-Smoking">2 Adults &bull; Non-Smoking</option>
+                  <option value="1 Adult &bull; Non-Smoking">1 Adult &bull; Non-Smoking</option>
+                  <option value="2 Adults, 1 Child &bull; Non-Smoking">2 Adults, 1 Child &bull; Non-Smoking</option>
+                  <option value="3 Adults &bull; Non-Smoking">3 Adults &bull; Non-Smoking</option>
+                  <option value="4 Adults (Family) &bull; Non-Smoking">4 Adults (Family) &bull; Non-Smoking</option>
+                  <option value="2 Adults &bull; Smoking Allowed">2 Adults &bull; Smoking Allowed</option>
+                  <option value="1 Adult &bull; Smoking Allowed">1 Adult &bull; Smoking Allowed</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Room Specs & View (Standardized Form Grid) -->
+          <div class="detail-box">
+            <div class="detail-box-header">
+              <span class="detail-box-title">Specifications</span>
+            </div>
+            <div class="unified-form-grid">
+              <div class="unified-field">
+                <label for="room-edit-type" class="unified-label">Room Type</label>
+                <select id="room-edit-type" class="unified-control">
+                  <option value="Royal Double Queen">Royal Double Queen</option>
+                  <option value="Deluxe Room">Deluxe Room</option>
+                  <option value="Himalayan View Suite">Himalayan View Suite</option>
+                  <option value="Maharaja Penthouse Suite">Maharaja Penthouse Suite</option>
+                  <option value="Presidential Suite">Presidential Suite</option>
+                  <option value="Executive Club Room">Executive Club Room</option>
+                  <option value="Garden Heritage Villa">Garden Heritage Villa</option>
+                </select>
+              </div>
+              <div class="unified-field">
+                <label for="room-edit-view" class="unified-label">Window View</label>
+                <select id="room-edit-view" class="unified-control">
+                  <option value="Himalayan Ridge View">Himalayan Ridge View</option>
+                  <option value="Doon Valley Panorama">Doon Valley Panorama</option>
+                  <option value="Forest & Pine View">Forest &amp; Pine View</option>
+                  <option value="Grand Courtyard Garden">Grand Courtyard Garden</option>
+                  <option value="Sunrise Mountain Ridge">Sunrise Mountain Ridge</option>
+                  <option value="City Panorama & Aravali View">City Panorama &amp; Aravali View</option>
+                  <option value="Courtyard Fountain View">Courtyard Fountain View</option>
+                </select>
+              </div>
+              <div class="unified-field">
+                <label for="room-edit-bed" class="unified-label">Bed Setup</label>
+                <select id="room-edit-bed" class="unified-control">
+                  <option value="2 Queen Beds">2 Queen Beds</option>
+                  <option value="1 King Bed">1 King Bed</option>
+                  <option value="1 California King">1 California King</option>
+                  <option value="2 Twin Beds">2 Twin Beds</option>
+                  <option value="1 King + 1 Sofa Bed">1 King + 1 Sofa Bed</option>
+                  <option value="2 Bunk Beds (Family)">2 Bunk Beds (Family)</option>
+                </select>
+              </div>
+              <div class="unified-field">
+                <label for="room-edit-area" class="unified-label">Floor Area</label>
+                <select id="room-edit-area" class="unified-control">
+                  <option value="520 sq. ft / 48 m²">520 sq. ft / 48 m&sup2;</option>
+                  <option value="380 sq. ft / 35 m²">380 sq. ft / 35 m&sup2;</option>
+                  <option value="450 sq. ft / 42 m²">450 sq. ft / 42 m&sup2;</option>
+                  <option value="650 sq. ft / 60 m²">650 sq. ft / 60 m&sup2;</option>
+                  <option value="850 sq. ft / 79 m²">850 sq. ft / 79 m&sup2;</option>
+                  <option value="1,200 sq. ft / 111 m²">1,200 sq. ft / 111 m&sup2;</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Amenities Badges (Interactive Click-to-Toggle) -->
+          <div class="detail-box">
+            <div class="detail-box-header">
+              <span class="detail-box-title">Amenities</span>
+              <span class="field-hint">Click badge to toggle</span>
+            </div>
+            <div class="amenities-wrap" id="room-amenities-wrap">
+              <!-- Dynamically populated chips -->
+            </div>
+          </div>
+
+          <!-- Section 4: Housekeeping & Steward (Standardized Form Grid) -->
+          <div class="detail-box housekeeping-box">
+            <div class="detail-box-header">
+              <span class="detail-box-title">Housekeeping &amp; Sanitization</span>
+            </div>
+            <div class="unified-form-grid">
+              <div class="unified-field">
+                <label for="room-edit-steward" class="unified-label">Floor Steward</label>
+                <select id="room-edit-steward" class="unified-control">
+                  <!-- Dynamically populated -->
+                </select>
+              </div>
+              <div class="unified-field">
+                <label for="room-edit-sanitized" class="unified-label">Sanitized Status</label>
+                <select id="room-edit-sanitized" class="unified-control">
+                  <option value="Today, 09:30 AM &bull; Certified Pristine">Today, 09:30 AM &bull; Certified Pristine</option>
+                  <option value="Deep Sanitized &bull; Ready for Check-in">Deep Sanitized &bull; Ready for Check-in</option>
+                  <option value="Housekeeping In Progress">Housekeeping In Progress</option>
+                  <option value="Inspection Pending">Inspection Pending</option>
+                  <option value="Scheduled for Deep Clean">Scheduled for Deep Clean</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATITHI Phase 2 AI Concierge Drawer / Testing Console -->
+  <div class="modal-backdrop" id="concierge-modal" role="dialog" aria-modal="true" aria-labelledby="concierge-title" hidden>
+    <div class="modal-card concierge-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="concierge-header-badges">
+            <span class="modal-badge-tier">Grounded Hotel Knowledge Engine</span>
+            <span class="status-indicator-live"><span class="dot-live"></span> Live Intelligence Active</span>
+          </div>
+          <h2 id="concierge-title" class="modal-title">ATITHI Concierge Operations</h2>
+        </div>
+        <button id="btn-close-concierge" class="modal-close" aria-label="Close concierge">&times;</button>
+      </div>
+
+      <div class="concierge-body">
+        <!-- Pipeline Visual Banner -->
+        <div class="pipeline-step-strip">
+          <div class="p-step"><span class="p-num">1</span> Guest Query</div>
+          <span class="p-arrow">&rarr;</span>
+          <div class="p-step"><span class="p-num">2</span> Intent &amp; Entities</div>
+          <span class="p-arrow">&rarr;</span>
+          <div class="p-step"><span class="p-num">3</span> Hotel Knowledge</div>
+          <span class="p-arrow">&rarr;</span>
+          <div class="p-step"><span class="p-num">4</span> Action &amp; Reply</div>
+        </div>
+
+        <!-- Quick Test Chips -->
+        <div class="concierge-quick-chips">
+          <span class="chips-label">Quick Prompts:</span>
+          <div class="chips-list">
+            <button type="button" class="btn-chip chip-prompt" data-query="Breakfast kitne baje hai?">&#127859; Breakfast timing?</button>
+            <button type="button" class="btn-chip chip-prompt" data-query="Room 204 mein AC nahi chal raha.">&#10052;&#65039; Room 204 AC issue</button>
+            <button type="button" class="btn-chip chip-prompt" data-query="Can I get an extra towel?">&#129533; Extra towel</button>
+            <button type="button" class="btn-chip chip-prompt" data-query="What is the Wi-Fi password?">&#128246; Wi-Fi password</button>
+            <button type="button" class="btn-chip chip-prompt" data-query="Is there parking?">&#128663; Parking facility</button>
+            <button type="button" class="btn-chip chip-prompt" data-query="Mera checkout kal hai, ek din extend kar sakte hain?">&#9200; Extend stay</button>
+            <button type="button" class="btn-chip chip-prompt" data-query="Do you have a room for tonight?">&#127976; Room for tonight</button>
+          </div>
+        </div>
+
+        <!-- Chat Conversation Area -->
+        <div class="concierge-chat-stream" id="concierge-chat-stream">
+          <div class="chat-msg bot-msg">
+            <div class="msg-author">ATITHI Concierge (The Himalayan Vista)</div>
+            <div class="msg-content">Namaste! I am ATITHI, grounded in our verified hotel operations. How may I assist you with your stay today?</div>
+          </div>
+        </div>
+
+        <!-- Message Input Row -->
+        <form id="concierge-input-form" class="concierge-input-form">
+          <input type="text" id="concierge-input-text" class="unified-control concierge-input" placeholder="Ask ATITHI in English or Hinglish (e.g. 'Breakfast kab hai?', 'Need extra towels')..." autocomplete="off">
+          <button type="submit" id="btn-concierge-send" class="btn-primary btn-concierge-send">
+            <span>Send</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATITHI Operational Tickets & Loop Closer Modal -->
+  <div class="modal-backdrop" id="tickets-modal" role="dialog" aria-modal="true" aria-labelledby="tickets-title" hidden>
+    <div class="modal-card tickets-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="concierge-header-badges">
+            <span class="modal-badge-tier">Closed-Loop Operations</span>
+            <span class="status-indicator-live"><span class="dot-live"></span> Live Property Sync</span>
+          </div>
+          <h2 id="tickets-title" class="modal-title">Live Operational Tickets &amp; Staff Dispatch</h2>
+        </div>
+        <button id="btn-close-tickets" class="modal-close" aria-label="Close tickets">&times;</button>
+      </div>
+
+      <div class="tickets-modal-body">
+        <!-- Filter Tabs -->
+        <div class="ticket-filter-tabs">
+          <button type="button" class="tkt-tab active" data-tkt-filter="all">All (<span id="tkt-count-all">0</span>)</button>
+          <button type="button" class="tkt-tab" data-tkt-filter="open">Open (<span id="tkt-count-open">0</span>)</button>
+          <button type="button" class="tkt-tab" data-tkt-filter="in_progress">In Progress (<span id="tkt-count-inprogress">0</span>)</button>
+          <button type="button" class="tkt-tab" data-tkt-filter="resolved">Resolved (<span id="tkt-count-resolved">0</span>)</button>
+          <button type="button" class="tkt-tab" data-tkt-filter="closed">Closed (<span id="tkt-count-closed">0</span>)</button>
+        </div>
+
+        <!-- Tickets List Stream -->
+        <div class="tickets-list-stream" id="tickets-list-stream">
+          <div class="tkt-empty-state">Loading operational tickets...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 8: In-Room QR Code Stand Modal -->
+  <div class="modal-backdrop" id="qr-modal" role="dialog" aria-modal="true" aria-labelledby="qr-modal-title" hidden>
+    <div class="modal-card qr-stand-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-badge-tier">Phase 8: In-Room Interaction Channel</span>
+          <h3 id="qr-modal-title" class="modal-title">In-Room QR Stand &bull; Digital Butler</h3>
+        </div>
+        <button id="btn-close-qr-modal" class="modal-close" aria-label="Close QR Stand">&times;</button>
+      </div>
+
+      <div class="qr-modal-body">
+        <!-- Room Selector Bar -->
+        <div class="qr-room-select-bar">
+          <label for="select-qr-room" style="font-size:12px;color:var(--text-muted);font-weight:600;">Preview In-Room Stand For:</label>
+          <select id="select-qr-room" class="select-qr-room-dropdown">
+            <option value="204" selected>Room 204 (Executive Valley Twin)</option>
+            <option value="101">Room 101 (Heritage Deluxe King)</option>
+            <option value="102">Room 102 (Heritage Deluxe Twin)</option>
+            <option value="104">Room 104 (Heritage Deluxe King)</option>
+            <option value="108">Room 108 (Heritage Deluxe King)</option>
+            <option value="202">Room 202 (Executive Valley Twin)</option>
+            <option value="207">Room 207 (Executive Valley King)</option>
+            <option value="302">Room 302 (Imperial Royal Suite)</option>
+            <option value="405">Room 405 (Presidential Sky Villa)</option>
+          </select>
+        </div>
+
+        <!-- The Physical In-Room Card Stand Simulation -->
+        <div class="qr-stand-card-preview" id="qr-stand-card">
+          <div class="stand-gold-border">
+            <div class="stand-inner">
+              <div class="stand-crest">&#9818;</div>
+              <h4 class="stand-hotel-name">The Himalayan Vista</h4>
+              <p class="stand-hotel-loc">Mussoorie &bull; Uttarakhand</p>
+
+              <div class="stand-divider"></div>
+
+              <div class="stand-headline">
+                <span class="stand-sub">NEED ANYTHING?</span>
+                <h3 class="stand-main-cta">Ask ATITHI.</h3>
+                <p class="stand-tagline">Point your camera to chat with your 24/7 AI Butler</p>
+              </div>
+
+              <!-- Real Dynamic QR Code -->
+              <div class="stand-qr-frame">
+                <img id="qr-stand-img" src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=http://localhost:8085/qr.html?room=204" alt="Scan to chat with ATITHI AI Concierge">
+                <div class="stand-qr-center-icon">&#9818;</div>
+              </div>
+
+              <div class="stand-room-pill" id="stand-room-pill">
+                ROOM 204
+              </div>
+
+              <div class="stand-multilingual-badge">
+                <span>नमस्ते</span> &bull; <span>Hello</span> &bull; <span>Bonjour</span> &bull; <span>Vanakkam</span>
+              </div>
+
+              <p class="stand-no-app">Zero app download required &bull; Instant In-Room AI Butler</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="qr-modal-actions">
+          <a id="btn-open-live-qr" href="http://localhost:8085/qr.html?room=204" target="_blank" class="btn-launch-qr">
+            <span class="icon">&#128640;</span> Open In-Room Guest QR Experience (New Tab)
+          </a>
+          <button type="button" class="btn-print-qr" onclick="window.print()">
+            <span class="icon">&#128424;</span> Print Table Tent Stand
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 9: ATITHI Operational Intelligence & Incident Verification Modal -->
+  <div class="modal-backdrop" id="incident-modal" role="dialog" aria-modal="true" aria-labelledby="incident-modal-title" hidden>
+    <div class="modal-card incident-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-badge-tier" style="background:rgba(239,68,68,0.15);color:#f87171;border-color:rgba(239,68,68,0.3);">&#128680; Phase 9: Operational Intelligence</span>
+          <h3 id="incident-modal-title" class="modal-title">Shared-System Incident Telemetry</h3>
+        </div>
+        <button id="btn-close-incident-modal" class="modal-close" aria-label="Close Incident Telemetry">&times;</button>
+      </div>
+
+      <div class="incident-modal-body">
+        <!-- Telemetry Summary Card -->
+        <div class="incident-telemetry-box">
+          <div class="telemetry-header">
+            <div class="telemetry-subsystem" id="modal-inc-subsystem">Central Heating &amp; Hot Water Circulation System</div>
+            <div class="telemetry-badge-active" id="modal-inc-status">CRITICAL ANOMALY</div>
+          </div>
+          <div class="telemetry-metric-grid">
+            <div class="telemetry-metric">
+              <span class="t-label">Correlated Rooms</span>
+              <span class="t-val" id="modal-inc-rooms">Room 204, 307, 412</span>
+            </div>
+            <div class="telemetry-metric">
+              <span class="t-label">Cluster Time Window</span>
+              <span class="t-val" id="modal-inc-window">17 Minutes</span>
+            </div>
+            <div class="telemetry-metric">
+              <span class="t-label">Target Department</span>
+              <span class="t-val" id="modal-inc-dept">Maintenance &amp; Engineering</span>
+            </div>
+            <div class="telemetry-metric">
+              <span class="t-label">Assigned Inspector</span>
+              <span class="t-val" id="modal-inc-engineer">Chief Engineer Rajesh Negi</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- The Exact ATITHI Alert Notice -->
+        <div class="incident-quote-card">
+          <div class="quote-tag">&#128172; ATITHI DISPATCH ADVISORY</div>
+          <blockquote id="modal-inc-alert-text">
+            &ldquo;Three rooms reported hot-water issues within 17 minutes. Please investigate the central heating system.&rdquo;
+          </blockquote>
+        </div>
+
+        <!-- AI Safety Architecture Block -->
+        <div class="ai-safety-deep-card">
+          <div class="safety-deep-header">
+            <span class="shield-badge">&#128737;&#65039; AI SAFETY &amp; OPERATIONAL RELIABILITY GUARANTEE</span>
+          </div>
+          <div class="safety-deep-body">
+            <p><strong>Core Safety Principle:</strong> ATITHI <u>does not assert hardware failure</u> or claim the boiler is broken. In complex physical building infrastructure, automated software assumptions risk costly misdiagnoses.</p>
+            <p>Instead, ATITHI flags a <em>spatial-temporal multi-point anomaly</em> and enforces <strong>human verification</strong> by Chief Engineering before any central system interventions or guest announcements occur.</p>
+          </div>
+        </div>
+
+        <!-- Recommended Physical Engineering Steps -->
+        <div class="incident-checklist-box">
+          <h4 class="checklist-title">&#128295; Recommended Inspection Procedure</h4>
+          <ul class="checklist-items">
+            <li>&#10003; Verify primary boiler pressure gauge and flame sensor at Basement Plant Room.</li>
+            <li>&#10003; Inspect primary circulation pump (Pump A/B toggle) for air-lock or cavitation.</li>
+            <li>&#10003; Check riser balancing valves on Floors 2, 3, and 4 to confirm return loop circulation.</li>
+          </ul>
+        </div>
+
+        <!-- Modal Actions -->
+        <div class="incident-modal-actions">
+          <button type="button" id="btn-modal-dispatch-eng" class="btn-primary-incident">
+            <span>&#128295;</span> Dispatch Chief Engineer
+          </button>
+          <button type="button" id="btn-modal-resolve-eng" class="btn-resolve-incident">
+            <span>&#9989;</span> Mark Inspected &amp; Clear
+          </button>
+          <button type="button" id="btn-modal-close-view" class="btn-close-incident-view">
+            Close View
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 12: End-to-End Presentation Demo Guide Modal -->
+  <div class="modal-backdrop" id="demo-guide-modal" role="dialog" aria-modal="true" aria-labelledby="demo-guide-title" hidden>
+    <div class="modal-card demo-guide-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-badge-tier" style="background:rgba(234,179,8,0.15);color:#facc15;border-color:rgba(234,179,8,0.3);">&#127916; Phase 12: Master Prototype Showcase</span>
+          <h3 id="demo-guide-title" class="modal-title">ATITHI End-to-End Operational Demo</h3>
+        </div>
+        <button id="btn-close-demo-modal" class="modal-close" aria-label="Close Demo Guide">&times;</button>
+      </div>
+
+      <div class="demo-guide-body">
+        <!-- Core Architectural Decision Callout -->
+        <div class="demo-arch-banner">
+          <div class="arch-banner-title">&#129504; ONE UNIFIED BRAIN &bull; THREE INTERACTION CHANNELS</div>
+          <p class="arch-banner-desc">Voice, In-Room QR, and Web Chat route into the <strong>exact same ATITHI Brain</strong> &mdash; turning natural guest conversations into operational hotel actions and measurable owner outcomes.</p>
+        </div>
+
+        <!-- 3 Demo Scenarios Grid -->
+        <div class="demo-scenarios-grid">
+          
+          <!-- Scenario 1: Booking -->
+          <div class="demo-scenario-card" id="demo-card-sc1">
+            <div class="demo-scenario-header">
+              <span class="demo-sc-num">Scenario 1</span>
+              <h4 class="demo-sc-title">&#128222; Inbound Booking Call</h4>
+            </div>
+            <div class="demo-step-flow">
+              <div class="demo-step"><strong>Guest:</strong> &ldquo;Do you have a room for 2 people this weekend?&rdquo;</div>
+              <div class="demo-arrow">&darr;</div>
+              <div class="demo-step"><strong>ATITHI:</strong> Qualifies inquiry &bull; Checks live hotel inventory</div>
+              <div class="demo-arrow">&darr;</div>
+              <div class="demo-step"><strong>Action:</strong> Books Room &bull; Front Desk ticket with <span class="tag-pay-property">&#127976; Pay on Property</span></div>
+              <div class="demo-arrow">&darr;</div>
+              <div class="demo-step"><strong>Owner Result:</strong> Captured in Revenue Funnel (+&#8377;9,600)</div>
+            </div>
+            <div class="demo-card-action">
+              <button type="button" id="btn-run-sc1" class="btn-run-scenario">
+                <span>&#9654;&#65039;</span> Run Live Scenario 1
+              </button>
+            </div>
+          </div>
+
+          <!-- Scenario 2: Complaint -->
+          <div class="demo-scenario-card" id="demo-card-sc2">
+            <div class="demo-scenario-header">
+              <span class="demo-sc-num">Scenario 2</span>
+              <h4 class="demo-sc-title">&#128295; Closed-Loop Complaint</h4>
+            </div>
+            <div class="demo-step-flow">
+              <div class="demo-step"><strong>Guest:</strong> &ldquo;Room 204 mein garam paani nahi aa raha.&rdquo;</div>
+              <div class="demo-arrow">&darr;</div>
+              <div class="demo-step"><strong>ATITHI:</strong> Intent = Complaint &bull; Subsystem = Hot Water &bull; Priority = HIGH</div>
+              <div class="demo-arrow">&darr;</div>
+              <div class="demo-step"><strong>Action:</strong> Ticket Created &bull; Staff Acknowledges &amp; Resolves</div>
+              <div class="demo-arrow">&darr;</div>
+              <div class="demo-step"><strong>Close the Loop:</strong> ATITHI asks &ldquo;Is it working now?&rdquo; &bull; Guest confirms &bull; <strong>CLOSED</strong></div>
+            </div>
+            <div class="demo-card-action">
+              <button type="button" id="btn-run-sc2" class="btn-run-scenario">
+                <span>&#9654;&#65039;</span> Run Live Scenario 2
+              </button>
+            </div>
+          </div>
+
+          <!-- Scenario 3: QR Multilingual Concierge -->
+          <div class="demo-scenario-card" id="demo-card-sc3">
+            <div class="demo-scenario-header">
+              <span class="demo-sc-num">Scenario 3</span>
+              <h4 class="demo-sc-title">&#128241; In-Room QR Concierge</h4>
+            </div>
+            <div class="demo-step-flow">
+              <div class="demo-step"><strong>Guest scans QR:</strong> &ldquo;Checkout kitne baje hai?&rdquo; &rarr; <em>&ldquo;11:00 AM standard checkout.&rdquo;</em></div>
+              <div class="demo-arrow">&darr;</div>
+              <div class="demo-step"><strong>Guest asks:</strong> &ldquo;Mujhe taxi chahiye.&rdquo;</div>
+              <div class="demo-arrow">&darr;</div>
+              <div class="demo-step"><strong>Action:</strong> Classified as Taxi Request &bull; Dispatches Concierge Ticket</div>
+              <div class="demo-arrow">&darr;</div>
+              <div class="demo-step"><strong>Track:</strong> Real-time mobile status &amp; staff dispatch synced</div>
+            </div>
+            <div class="demo-card-action">
+              <button type="button" id="btn-run-sc3" class="btn-run-scenario">
+                <span>&#9654;&#65039;</span> Run Live Scenario 3
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- The Result: Owner Seeing the Outcome -->
+        <div class="demo-owner-summary-box">
+          <div class="summary-box-header">
+            <span class="summary-crown">&#128081;</span>
+            <div class="summary-header-text">
+              <h4>AND THEN &mdash; THE OWNER SEES THE RESULT</h4>
+              <p>Operational data translates into direct revenue opportunities, response SLA speeds, and problem prevention.</p>
+            </div>
+          </div>
+          <div class="summary-kpi-row">
+            <div class="summary-kpi"><span class="kpi-num">37</span><span class="kpi-lbl">Calls Answered</span></div>
+            <div class="summary-kpi"><span class="kpi-num">14</span><span class="kpi-lbl">Enquiries Captured</span></div>
+            <div class="summary-kpi"><span class="kpi-num">8</span><span class="kpi-lbl">Complaints</span></div>
+            <div class="summary-kpi"><span class="kpi-num">7</span><span class="kpi-lbl">Resolved</span></div>
+            <div class="summary-kpi highlight"><span class="kpi-num">6/7</span><span class="kpi-lbl">Before Checkout</span></div>
+            <div class="summary-kpi gold"><span class="kpi-num">&#8377;18,000</span><span class="kpi-lbl">Potential Revenue</span></div>
+          </div>
+          <div class="summary-actions">
+            <a href="owner.html" class="btn-view-owner-dashboard" target="_blank">
+              <span>&#128081;</span> Open Owner Executive Intelligence Dashboard (New Tab)
+            </a>
+          </div>
+        </div>
+
+        <!-- Live Output Terminal -->
+        <div class="demo-terminal" id="demo-terminal" style="display:none;">
+          <div class="terminal-title-bar">
+            <span>&#9889; LIVE EXECUTION TELEMETRY</span>
+            <span id="demo-term-status" class="term-status-badge">Running</span>
+          </div>
+          <div class="terminal-body" id="demo-term-body"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio elements & Sound effect toast -->
+  <div class="audio-toast" id="audio-toast" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
